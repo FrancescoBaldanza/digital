@@ -38,8 +38,10 @@ function to_elkjs(graph) {
                     x: ppos[p.group][p.id].x,
                     y: ppos[p.group][p.id].y,
                     properties: {
-                        'port.side': p.group == "in" ? "WEST" : p.group == "in2" ? "NORTH" : "EAST",
-                        'port.borderOffset': 30,
+                        'port.side': (p.group == "in" || p.group == "left") ? "WEST" :
+                                     (p.group == "in2" || p.group == "top" || p.group == "in_top" || p.group == "out_top") ? "NORTH" :
+                                     (p.group == "bottom" || p.group == "in_bottom" || p.group == "out_bottom") ? "SOUTH" : "EAST",
+                        'port.borderOffset': 0,
                         'port.index': -i
                     }
                 };

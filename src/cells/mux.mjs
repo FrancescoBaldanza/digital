@@ -17,17 +17,25 @@ export const GenMux = Gate.define('GenMux', {
     ports: {
         groups: {
             'in2': {
-                position: { name: 'top', args: { y: 5 } },
+                position: { name: 'top', args: { y: 0 } },
                 attrs: joint.util.merge({}, portGroupAttrs, {
-                    wire: { x2: 0, y2: -25 },
-                    port: { magnet: 'passive', refY: -25 },
-                    bits: { refDx: -5, refDy: 2, textAnchor: 'start' }
+                    wire: { x2: 0, y2: 0, display: 'none' },
+                    port: { magnet: 'passive', refY: 0 },
+                    bits: { refDx: 5, refDy: -5, textAnchor: 'start' }
                 }),
                 z: -1
             }
         }
     },
-    attrs: { label: { refDy: 8 } }
+    attrs: {
+        label: {
+            refX: .5, refY: .5,
+            textAnchor: 'middle', textVerticalAnchor: 'middle',
+            fontSize: '9.5pt',
+            fontWeight: '600',
+            fill: '#dfe1e5'
+        }
+    }
 }, {
     initialize() {
         const bits = this.get('bits');
@@ -91,12 +99,12 @@ export const GenMux = Gate.define('GenMux', {
         }
         return res;
     },
-    markup: Gate.prototype.markup.concat([{
+    markup: [{
             tagName: 'polygon',
             className: 'body',
             selector: 'body'
         }
-    ]),
+    ].concat(Gate.prototype.markup),
     _gateParams: Gate.prototype._gateParams.concat(['bits']),
     _unsupportedPropChanges: Gate.prototype._unsupportedPropChanges.concat(['bits']),
     _operationHelpers: Gate.prototype._operationHelpers.concat(['muxInput'])

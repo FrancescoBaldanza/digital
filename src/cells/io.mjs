@@ -99,8 +99,9 @@ export const IO = NumBase.define('IO', {
         ioname: {
             refX: .5, refY: .5,
             textAnchor: 'middle', textVerticalAnchor: 'middle',
-            fontWeight: 'bold',
-            fontSize: '10pt'
+            fontWeight: '600',
+            fontSize: '9pt',
+            fill: '#dfe1e5'
         }
     }
 }, {
@@ -131,10 +132,28 @@ export const IO = NumBase.define('IO', {
 
         this.set('mode', mode);
         this.set('box_resized', false);
+        if (mode == 1) {
+            const labelProp = this.get('label') || this.get('net');
+            if (labelProp && typeof labelProp === 'string' && labelProp.trim().length > 0) {
+                const estWidth = Math.max(34, Math.ceil(labelProp.length * 8.5 + 28));
+                this.prop('size/width', estWidth);
+            }
+        }
         this.set('markup', mode == 0 ? this.markupInSubcircuit :
             mode == 1 ? this.markupSingle : this.markupBus
         );
         return mode;
+    },
+    getLayoutSize() {
+        const size = this.size();
+        if (this.get('mode') == 1) {
+            const labelProp = this.get('label') || this.get('net');
+            if (labelProp && typeof labelProp === 'string' && labelProp.trim().length > 0) {
+                const estWidth = Math.max(size.width, Math.ceil(labelProp.length * 8.5 + 28));
+                return { width: estWidth, height: size.height };
+            }
+        }
+        return size;
     },
     _setPortsBits(portsBits) {
         NumBase.prototype._setPortsBits.apply(this, arguments);
@@ -159,14 +178,35 @@ export const IO = NumBase.define('IO', {
 export const IOView = NumBaseView.extend({
     _calculateBoxWidth() {
         switch (this.model.get('mode')) {
-            case 0:
+            case 0: {
                 // resize based on io name
-                const text = this.selectors['ioname'];
-                if (text.getAttribute('display') !== 'none') return text.getBBox().width + 10;
+                const text = this.selectors['ioname'] || this.el.querySelector('text.ioname');
+                if (text && text.getAttribute('display') !== 'none') {
+                    try {
+                        const bbox = text.getBBox();
+                        if (bbox && bbox.width > 0) return Math.ceil(bbox.width + 16);
+                    } catch (e) {}
+                }
                 return 20;
-            case 1:
-                // resize to width = 30 (assumes height == 30 too)
-                return 30;
+            }
+            case 1: {
+                // Single-bit I/O (Button, Lamp)
+                // Resize to fit the centered text label with margin
+                const label = this.el.querySelector('text.label');
+                if (label && label.textContent && label.textContent.trim().length > 0) {
+                    try {
+                        const bbox = label.getBBox();
+                        if (bbox && bbox.width > 0) {
+                            return Math.max(34, Math.ceil(bbox.width + 28));
+                        }
+                    } catch (e) {}
+                }
+                const labelProp = this.model.get('label') || this.model.get('net');
+                if (labelProp && typeof labelProp === 'string' && labelProp.trim().length > 0) {
+                    return Math.max(34, Math.ceil(labelProp.length * 8.5 + 28));
+                }
+                return 34;
+            }
             case 2:
                 // resize based on binary string
                 return NumBaseView.prototype._calculateBoxWidth.call(this);
@@ -177,11 +217,17 @@ export const IOView = NumBaseView.extend({
 // Input model
 export const Input = IO.define('Input', {
     attrs: {
+        '.': { cursor: 'pointer' },
+        body: { cursor: 'pointer' },
         btnface: {
-            stroke: 'black', strokeWidth: 2,
-            refX: .2, refY: .2,
-            refHeight: .6, refWidth: .6,
+            stroke: '#565961', strokeWidth: 1.5, rx: 6, ry: 6,
+            refX: 3, refY: 3,
+            refWidth: -6, refHeight: -6,
             cursor: 'pointer'
+        },
+        label: {
+            cursor: 'pointer',
+            pointerEvents: 'none'
         },
         valinput: {
             refX: .5, refY: .5,
@@ -215,12 +261,20 @@ export const Input = IO.define('Input', {
             throw new Error("setInput: wrong number of bits");
         this.set('outputSignals', { out: sig });
     },
-    markupSingle: IO.prototype.markupSingle.concat([{
+    markupSingle: [{
+            tagName: 'rect',
+            className: 'body',
+            selector: 'body'
+        }, {
             tagName: 'rect',
             className: 'btnface',
             selector: 'btnface'
+        }, {
+            tagName: 'text',
+            className: 'label',
+            selector: 'label'
         }
-    ]),
+    ],
     markupBus: IO.prototype.markupBus.concat([{
             tagName: 'foreignObject',
             className: 'valinput',
@@ -240,8 +294,16 @@ export const Input = IO.define('Input', {
 export const InputView = IOView.extend({
     attrs: joint.util.merge({
         button: {
-            high: { btnface: { 'fill': 'black' } },
-            low: { btnface: { 'fill': 'white' } }
+            high: {
+                body: { 'fill': '#1b4382', 'stroke': '#3574f0', 'stroke-width': '2px', 'filter': 'drop-shadow(0 0 10px rgba(53, 116, 240, 0.7))' },
+                btnface: { 'fill': '#265cb8', 'stroke': '#5799f7' },
+                label: { 'fill': '#ffffff', 'font-weight': 'bold' }
+            },
+            low: {
+                body: { 'fill': '#2b2d30', 'stroke': '#43454a', 'stroke-width': '1.5px', 'filter': 'none' },
+                btnface: { 'fill': '#393b40', 'stroke': '#565961' },
+                label: { 'fill': '#dfe1e5', 'font-weight': '600' }
+            }
         }
     }, IOView.prototype.attrs),
     confirmUpdate(flags) {
@@ -272,18 +334,35 @@ export const InputView = IOView.extend({
         this._updateView();
     },
     events: joint.util.merge({
-        //button
-        "click .btnface": "_onButton",
-        "mousedown .btnface": "stopprop", // Prevent drag
-        "touchstart .btnface": "stopprop", // Prevent drag & make sure click is generated
+        //button: clicking anywhere on the input element toggles it
+        "click": "_onButtonClick",
+        "mousedown": "_onButtonMouseDown",
+        "touchstart": "_onButtonTouchStart",
         //numEntry
         "click input": "stopprop",
         "mousedown input": "stopprop", // Prevent drag
         "touchstart input": "stopprop", // Prevent drag & make sure the input receives focus
         "change input": "_onNumEntry"
     }, NumBaseView.prototype.events),
-    _onButton() {
-        this.model.toggleInput();
+    _onButtonClick(evt) {
+        if (this.model.get('mode') === 1) {
+            if (evt.target && evt.target.classList && evt.target.classList.contains('port')) return;
+            evt.stopPropagation();
+            this.model.toggleInput();
+        }
+    },
+    _onButtonMouseDown(evt) {
+        if (this.model.get('mode') === 1) {
+            if (evt.target && evt.target.classList && evt.target.classList.contains('port')) return;
+            evt.stopPropagation();
+        }
+    },
+    _onButtonTouchStart(evt) {
+        if (this.model.get('mode') === 1) {
+            if (evt.target && evt.target.classList && evt.target.classList.contains('port')) return;
+            evt.stopPropagation();
+            this.model.toggleInput();
+        }
     },
     _onNumEntry(evt) {
         const numbase = this.model.get('numbase');
@@ -298,17 +377,20 @@ export const InputView = IOView.extend({
     }
 });
 
-// legacy special input models, now replaced by Input
-export const Button = Input;
+// legacy special input models, extending Input
+export const Button = Input.define('Button');
 export const ButtonView = InputView;
-export const NumEntry = Input;
+export const NumEntry = Input.define('NumEntry');
 export const NumEntryView = InputView;
 
 // Output model
 export const Output = IO.define('Output', {
     attrs: {
         led: {
-            refX: .5, refY: .5, refR: .35
+            display: 'none'
+        },
+        label: {
+            pointerEvents: 'none'
         },
         value: {
             refX: .5, refY: .5,
@@ -322,12 +404,16 @@ export const Output = IO.define('Output', {
     getOutput() {
         return this.get('inputSignals').in;
     },
-    markupSingle: IO.prototype.markupSingle.concat([{
-            tagName: 'circle',
-            className: 'led',
-            selector: 'led'
+    markupSingle: [{
+            tagName: 'rect',
+            className: 'body',
+            selector: 'body'
+        }, {
+            tagName: 'text',
+            className: 'label',
+            selector: 'label'
         }
-    ]),
+    ],
     markupBus: IO.prototype.markupBus.concat([{
             tagName: 'text',
             className: 'value numvalue',
@@ -339,9 +425,18 @@ export const Output = IO.define('Output', {
 export const OutputView = IOView.extend({
     attrs: joint.util.merge({
         lamp: {
-            high: { led: { 'fill': '#03c03c' } },
-            low: { led: { 'fill': '#fc7c68' } },
-            undef: { led: { 'fill': '#bfc5c6' } }
+            high: {
+                body: { 'fill': '#245930', 'stroke': '#59a869', 'stroke-width': '2px', 'filter': 'drop-shadow(0 0 10px rgba(89, 168, 105, 0.7))' },
+                label: { 'fill': '#ffffff', 'font-weight': 'bold' }
+            },
+            low: {
+                body: { 'fill': '#2b2d30', 'stroke': '#43454a', 'stroke-width': '1.5px', 'filter': 'none' },
+                label: { 'fill': '#bcbec4', 'font-weight': '600' }
+            },
+            undef: {
+                body: { 'fill': '#42331c', 'stroke': '#e5a84b', 'stroke-width': '1.5px', 'filter': 'none' },
+                label: { 'fill': '#e5a84b', 'font-weight': '600' }
+            }
         }
     }, IOView.prototype.attrs),
     confirmUpdate(flags) {
@@ -373,11 +468,11 @@ export const OutputView = IOView.extend({
     }
 });
 
-// legacy special output models, now replaced by Output
-export const Lamp = Output;
+// legacy special output models, extending Output
+export const Lamp = Output.define('Lamp');
 export const LampView = OutputView;
 
-export const NumDisplay = Output;
+export const NumDisplay = Output.define('NumDisplay');
 export const NumDisplayView = OutputView;
 
 // Constant
@@ -458,7 +553,10 @@ export const Clock = Box.define('Clock', {
         ]
     },
 
-    size: { width: 30, height: 30 }
+    size: { width: 34, height: 34 },
+    attrs: {
+        label: { display: 'none' }
+    }
 }, {
     _resetPortValue(port) {
         if (port.id == "out" && port.dir == "out") {
@@ -469,11 +567,18 @@ export const Clock = Box.define('Clock', {
         // trigger next clock edge
         return { out: this.get('outputSignals').out.not(), _clock_hack: true };
     },
+    getLayoutSize() {
+        return this.size();
+    },
     tooltipMinWidth: 55,
-    markup: Box.prototype.markup.concat([{
+    markup: [{
+            tagName: 'rect',
+            className: 'body',
+            selector: 'body'
+        }, {
             tagName: 'path',
             className: 'decor',
-            attributes: { d: 'M7.5 7.5 L7.5 22.5 L15 22.5 L15 7.5 L22.5 7.5 L22.5 22.5', stroke: 'black' }
+            attributes: { d: 'M7 9 L7 25 L15 25 L15 9 L23 9 L23 25', stroke: '#3574f0', strokeWidth: 2, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' }
         }, {
             tagName: 'foreignObject',
             className: 'tooltip',
@@ -487,10 +592,14 @@ export const Clock = Box.define('Clock', {
                 }]
             }]
         }
-    ]),
+    ],
     _unsupportedPropChanges: Box.prototype._unsupportedPropChanges.concat(['bits'])
 });
 export const ClockView = BoxView.extend({
+    _autoResizeBox: false,
+    _calculateBoxWidth() {
+        return 34;
+    },
     presentationAttributes: BoxView.addPresentationAttributes({
         propagation: 'SIGNAL'
     }),

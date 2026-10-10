@@ -189,15 +189,18 @@ body {
 
 .joint-element foreignObject.tooltip {
     visibility: hidden;
-    opacity:0;
-    transition:visibility 0s linear 0.5s,opacity 0.5s linear;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
+.joint-element:hover foreignObject.tooltip,
 .joint-element foreignObject.tooltip:hover,
 g:hover > foreignObject.tooltip {
     visibility: visible;
-    opacity:1;
-    transition-delay:0s;
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0s;
 }
 
 .joint-element foreignObject.tooltip body {
@@ -210,10 +213,14 @@ g:hover > foreignObject.tooltip {
 div.wire_hover {
     position: fixed;
     pointer-events: none;
-    background: white;
-    border: 1px solid black;
-    padding: 5px;
-    font-size: 8pt;
+    background: #2b2d30;
+    color: #dfe1e5;
+    border: 1px solid #43454a;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 11px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "JetBrains Sans", Roboto, monospace;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
     z-index: 200;
 }
 
@@ -223,7 +230,7 @@ div.wire_hover {
 }
 
 .joint-element text.numvalue {
-    fill: black;
+    fill: #dfe1e5;
     text-anchor: middle;
 }
 
@@ -239,6 +246,7 @@ table.monitor td {
 table.monitor {
   border-collapse: collapse;
   width: 100%;
+  color: #dfe1e5;
 }
 
 table.monitor td.name {
@@ -247,6 +255,11 @@ table.monitor td.name {
 
 table.monitor input[name=trigger], table.monitor select[name=trigger] {
     width: 5em;
+    background-color: #1e1f22;
+    color: #dfe1e5;
+    border: 1px solid #43454a;
+    border-radius: 4px;
+    padding: 2px 4px;
 }
 
 canvas.wavecanvas {
@@ -255,11 +268,14 @@ canvas.wavecanvas {
 
 table.memeditor {
     margin-top: 0.5em;
+    color: #dfe1e5;
 }
 
 table.memeditor input {
     font-family: monospace;
-    border: 1px solid #aaa;
+    background-color: #1e1f22;
+    color: #dfe1e5;
+    border: 1px solid #43454a;
     border-radius: 4px;
     padding: 0.2em 0.5em;
 }
@@ -309,3 +325,235 @@ table.memeditor input.iswrite.isread {
 .ui-dialog, .ui-dialog-content {
     box-sizing: content-box;
 }
+
+/* ==========================================================================
+   JetBrains New UI Theme System
+   ========================================================================== */
+
+/* Modern Dot-Grid Paper */
+.djs {
+    background-color: #1e1f22 !important;
+    background-image: radial-gradient(#393b40 1.2px, transparent 1.2px) !important;
+    background-size: 20px 20px !important;
+}
+
+/* Base Element Card Styling */
+.joint-element {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "JetBrains Sans", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+.joint-element rect.body {
+    rx: 8px !important;
+    ry: 8px !important;
+    fill: #2b2d30;
+    stroke: #43454a;
+    stroke-width: 1.5px;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.35));
+    transition: fill 0.15s ease, stroke 0.15s ease, filter 0.15s ease;
+}
+
+.joint-element:hover rect.body {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+}
+
+/* Logic Gates Styling (AND, OR, NOT, XOR, NAND, NOR, XNOR) */
+.joint-element path.gate,
+.joint-element path.body.gate,
+.joint-element path.body {
+    fill: #2b2d30 !important;
+    stroke: #43454a !important;
+    stroke-width: 1.5px !important;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.35));
+    transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+.joint-element path[selector="xor_arc"] {
+    stroke: #43454a !important;
+    stroke-width: 1.5px !important;
+    fill: none !important;
+}
+
+.joint-element circle.neg_bubble {
+    fill: #2b2d30 !important;
+    stroke: #43454a !important;
+    stroke-width: 1.5px !important;
+}
+
+/* Typography Hierarchy */
+.joint-element text {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "JetBrains Sans", Roboto, Helvetica, Arial, sans-serif !important;
+    letter-spacing: 0.2px;
+    pointer-events: none !important;
+    user-select: none !important;
+}
+
+.joint-element text.label,
+.joint-element text.type,
+.joint-element text.ioname {
+    fill: #dfe1e5;
+    font-weight: 600 !important;
+}
+
+.joint-element text.iolabel {
+    fill: #bcbec4;
+    font-weight: 500 !important;
+}
+
+.joint-element text.bits {
+    fill: #868a98 !important;
+    font-size: 8px !important;
+}
+
+/* Modern minimal port styling */
+.joint-element circle.port {
+    r: 3.5px;
+    stroke: #565961 !important;
+    fill: #1e1f22 !important;
+    stroke-width: 1.5px !important;
+    cursor: crosshair;
+    transition: r 0.15s ease, fill 0.15s ease, stroke 0.15s ease;
+}
+
+.joint-element circle.port:hover {
+    r: 5px;
+    stroke: #3574f0 !important;
+    fill: #3574f0 !important;
+}
+
+/* Hide wire stubs extending from modules */
+.joint-element line.wire {
+    display: none !important;
+}
+
+/* Gates (AND, OR, NOT, XOR, NAND, NOR, XNOR) have recognizable shapes and do not need text labels */
+.joint-element.gate text.label,
+.joint-element[data-type*="Gate"] text.label,
+.joint-element[data-type*="And"] text.label,
+.joint-element[data-type*="Or"] text.label,
+.joint-element[data-type*="Not"] text.label,
+.joint-element[data-type*="Xor"] text.label,
+.joint-element[data-type*="Nand"] text.label,
+.joint-element[data-type*="Nor"] text.label,
+.joint-element[data-type*="Xnor"] text.label,
+.joint-element[data-type*="Repeater"] text.label {
+    display: none !important;
+}
+
+/* Smooth Wires */
+.joint-link path.connection {
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    transition: stroke 0.15s ease, stroke-width 0.15s ease, filter 0.15s ease;
+}
+
+/* Modern Tooltip / Number input */
+.joint-element foreignObject.tooltip:not(.zoom-bar) body {
+    background: #2b2d30 !important;
+    border: 1px solid #43454a !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45) !important;
+    color: #dfe1e5 !important;
+}
+
+/* Floating Zoom Bar Pill */
+.joint-element foreignObject.tooltip.zoom-bar {
+    overflow: visible;
+    pointer-events: none;
+}
+
+.joint-element foreignObject.tooltip.zoom-bar body {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    pointer-events: none;
+}
+
+.joint-element foreignObject.tooltip.zoom-bar .zoom-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #2b2d30;
+    border: 1px solid #43454a;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    padding: 3px 7px;
+    box-sizing: border-box;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.joint-element foreignObject.tooltip.zoom-bar .zoom-pill:hover {
+    background: #35373c;
+    border-color: #3574f0;
+    box-shadow: 0 4px 14px rgba(53, 116, 240, 0.25);
+}
+
+.joint-element foreignObject.tooltip.zoom-bar a.zoom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.joint-element foreignObject.tooltip.zoom-bar a.zoom svg {
+    display: block;
+    transition: stroke 0.15s ease;
+}
+
+.joint-element foreignObject.tooltip.zoom-bar a.zoom:hover svg circle,
+.joint-element foreignObject.tooltip.zoom-bar a.zoom:hover svg path {
+    stroke: #3574f0;
+}
+
+.joint-element foreignObject body input[type='number'],
+.joint-element foreignObject body input[type='text'],
+.joint-element foreignObject body select {
+    background-color: #1e1f22 !important;
+    color: #dfe1e5 !important;
+    border: 1px solid #43454a !important;
+    border-radius: 4px !important;
+    padding: 2px 4px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace !important;
+}
+
+/* JointJS Link Tools / Wire routing handles (Max/MSP patch cord style) */
+.joint-tool[data-tool-name='vertices'] circle,
+.joint-tool[data-tool-name='segments'] circle,
+.joint-tool[data-tool-name='source-arrowhead'] circle,
+.joint-tool[data-tool-name='target-arrowhead'] circle {
+    fill: #3574f0 !important;
+    stroke: #ffffff !important;
+    stroke-width: 1.5px !important;
+    r: 4.5px !important;
+    cursor: move !important;
+    transition: r 0.15s ease, fill 0.15s ease;
+}
+
+.joint-tool[data-tool-name='vertices'] circle:hover,
+.joint-tool[data-tool-name='segments'] circle:hover,
+.joint-tool[data-tool-name='source-arrowhead'] circle:hover,
+.joint-tool[data-tool-name='target-arrowhead'] circle:hover {
+    r: 6px !important;
+    fill: #5799f7 !important;
+}
+
+/* Strictly hide any delete / monitor / options icons on wires */
+.joint-tool[data-tool-name='remove'],
+.joint-tool[data-tool-name='monitor'],
+.joint-tool[data-tool-name='button'],
+.joint-link .tool-remove,
+.joint-link .tool-options {
+    display: none !important;
+}
+
+

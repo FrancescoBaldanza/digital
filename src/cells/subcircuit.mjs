@@ -5,8 +5,8 @@ import { Box, BoxView } from './base.mjs';
 import { IO, Input, Output } from './io.mjs';
 
 // add offset of 10pt to account for the top label at layout time
-const subcircuit_pos_offset = 10;
-const subcircuit_size_offset = 10;
+const subcircuit_pos_offset = 0;
+const subcircuit_size_offset = 0;
 
 // Subcircuit model -- embeds a circuit graph in an element
 export const Subcircuit = Box.define('Subcircuit', {
@@ -19,15 +19,29 @@ export const Subcircuit = Box.define('Subcircuit', {
             refWidth: 1, refHeight: 1,
             stroke: 'red', strokeWidth: 10
         },
-        type: {
-            refX: .5, refY: -10,
+        label: {
+            refX: .5, refY: .5,
             textAnchor: 'middle', textVerticalAnchor: 'middle',
-            fontSize: '8pt'
+            fontSize: '9.5pt',
+            fontWeight: '600',
+            fill: '#dfe1e5'
         }
     }
 }, {
     initialize() {
-        this.bindAttrToProp('type/text', 'celltype');
+        const cleanName = (name) => {
+            if (!name) return '';
+            return name.startsWith('\\') ? name.slice(1) : name;
+        };
+
+        const rawLabel = this.get('label');
+        const rawCelltype = this.get('celltype');
+        const displayName = cleanName(rawLabel) || cleanName(rawCelltype);
+
+        this.attr('label/text', displayName);
+        this.on('change:label', (_, val) => {
+            this.attr('label/text', cleanName(val) || cleanName(this.get('celltype')));
+        });
 
         const graph = this.get('graph');
         console.assert(graph instanceof joint.dia.Graph);
@@ -44,7 +58,17 @@ export const Subcircuit = Box.define('Subcircuit', {
         inputs.sort(sortfun);
         outputs.sort(sortfun);
         const vcount = Math.max(inputs.length, outputs.length);
-        const size = { width: 80, height: vcount*16+8 };
+
+        const inMaxLen = inputs.length > 0 ? Math.max(...inputs.map(io => (io.get('net') || '').length)) : 0;
+        const outMaxLen = outputs.length > 0 ? Math.max(...outputs.map(io => (io.get('net') || '').length)) : 0;
+        const maxSideLen = Math.max(inMaxLen, outMaxLen);
+        const maxSidePx = maxSideLen * 7.5;
+        const centerTextPx = Math.max(displayName.length * 8, 30);
+        const margin = 20; // 20px margin on each side of the instance label
+        const calculatedWidth = Math.max(Math.ceil(2 * maxSidePx + centerTextPx + 2 * (8 + margin)), 80);
+        const calculatedHeight = Math.max(vcount * 16 + 12, 36);
+
+        const size = { width: calculatedWidth, height: calculatedHeight };
         const ports = [], iomap = {};
         for (const [num, io] of inputs.entries()) {
             ports.push({ id: io.get('net'), group: 'in', dir: 'in', bits: io.get('bits'), labelled: true });
@@ -94,13 +118,16 @@ export const Subcircuit = Box.define('Subcircuit', {
     markup: [{
             tagName: 'rect',
             selector: 'wrapper'
-        }
-    ].concat(Box.prototype.markup, [{
+        }, {
+            tagName: 'rect',
+            className: 'body',
+            selector: 'body'
+        }, {
             tagName: 'text',
-            className: 'type',
-            selector: 'type'
+            className: 'label',
+            selector: 'label'
         }
-    ], Box.prototype.markupZoom),
+    ].concat(Box.prototype.markupZoom),
     _gateParams: Box.prototype._gateParams.concat(['celltype']),
     _unsupportedPropChanges: Box.prototype._unsupportedPropChanges.concat(['celltype'])
 });
@@ -145,4 +172,8 @@ export const SubcircuitView = BoxView.extend({
         return false;
     }
 });
+
+// Generic Rectangular Module (Generic Box) alias for Subcircuit
+export const GenericBox = Subcircuit;
+export const GenericBoxView = SubcircuitView;
 

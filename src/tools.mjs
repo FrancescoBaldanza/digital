@@ -5,11 +5,10 @@ import * as joint from '@joint/core';
 const circleArrowhead = {
     tagName: 'circle',
     attributes: {
-        'r': 7,
-        'fill': 'black',
-        'fill-opacity': 0.3,
-        'stroke': 'black',
-        'stroke-width': 2,
+        'r': 4.5,
+        'fill': '#3574f0',
+        'stroke': '#ffffff',
+        'stroke-width': 1.5,
         'cursor': 'move'
     }
 };

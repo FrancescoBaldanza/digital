@@ -9,28 +9,29 @@ export const portGroupAttrs = {
     wire: {
         stroke: '#4B4F6A',
         x1: 0, y1: 0,
-        x2: undefined, y2: 0
+        x2: 0, y2: 0,
+        display: 'none'
     },
     port: {
         magnet: undefined,
-        r: 7,
-        stroke: 'black',
-        fill: 'white',
-        strokeWidth: 2,
-        strokeOpacity: 0.5
+        r: 3.5,
+        stroke: '#1e1f22',
+        fill: '#ffffff',
+        strokeWidth: 1.5,
+        strokeOpacity: 0.9
     },
     bits: {
         ref: 'port',
-        fill: 'black',
+        fill: '#2b2d30',
         fontSize: '7pt'
     },
     iolabel: {
         textVerticalAnchor: 'middle',
-        fill: 'black',
-        fontSize: '8pt'
+        fill: '#1e1f22',
+        fontSize: '8.5pt'
     },
     decor: {
-        stroke: 'black',
+        stroke: '#1e1f22',
         fill: 'transparent'
     }
 };
@@ -46,12 +47,13 @@ export const Gate = joint.dia.Element.define('Gate', {
     outputSignals: {},
     attrs: {
         '.': { magnet: false },
-        body: { stroke: 'black', strokeWidth: 2 },
+        body: { stroke: '#43454a', strokeWidth: 1.5, fill: '#2b2d30', rx: 8, ry: 8 },
         label: {
-            refX: .5, refDy: 3,
-            textAnchor: 'middle',
-            fontSize: '8pt',
-            fill: 'black'
+            refX: .5, refY: .5,
+            textAnchor: 'middle', textVerticalAnchor: 'middle',
+            fontSize: '9.5pt',
+            fontWeight: '600',
+            fill: '#dfe1e5'
         }
     },
     ports: {
@@ -59,19 +61,19 @@ export const Gate = joint.dia.Element.define('Gate', {
             'in': {
                 position: 'left',
                 attrs: joint.util.merge({}, portGroupAttrs, {
-                    wire: { x2: -25 },
-                    port: { magnet: 'passive', refX: -25 },
-                    bits: { refDx: 1, refY: -3, textAnchor: 'start' },
-                    iolabel: { refX: 5, textAnchor: 'start' }
+                    wire: { x2: 0, display: 'none' },
+                    port: { magnet: 'passive', refX: 0 },
+                    bits: { refX: -5, refY: -5, textAnchor: 'end' },
+                    iolabel: { refX: 8, textAnchor: 'start' }
                 })
             },
             'out': {
                 position: 'right',
                 attrs: joint.util.merge({}, portGroupAttrs, {
-                    wire: { x2: 25 },
-                    port: { magnet: true, refX: 25 },
-                    bits: { refX: -1, refY: -3, textAnchor: 'end' },
-                    iolabel: { refX: -5, textAnchor: 'end' }
+                    wire: { x2: 0, display: 'none' },
+                    port: { magnet: true, refX: 0 },
+                    bits: { refX: 5, refY: -5, textAnchor: 'start' },
+                    iolabel: { refX: -8, textAnchor: 'end' }
                 })
             }
         }
@@ -384,7 +386,7 @@ export const Wire = joint.shapes.standard.Link.define('Wire', {
 }, {
     initialize() {
         joint.shapes.standard.Link.prototype.initialize.apply(this, arguments);
-        if (this.has('netname')) {
+        if (this.has('netname') && this.get('showNetnameLabel') === true) {
             this.label(0, {
                 markup: [
                     {
@@ -497,13 +499,13 @@ export const WireView = joint.dia.LinkView.extend({
     longWireLength: 400,
     attrs: {
         signal: {
-            high: { line: { 'stroke': '#03c03c' } },
-            low: { line: { 'stroke': '#fc7c68' } },
-            def: { line: { 'stroke': '#779ecb' } },
-            undef: { line: { 'stroke': '#999' } }
+            high: { line: { 'stroke': '#59a869', 'filter': 'drop-shadow(0 0 3px rgba(89, 168, 105, 0.6))' } },
+            low: { line: { 'stroke': '#565961', 'filter': 'none' } },
+            def: { line: { 'stroke': '#3574f0', 'filter': 'none' } },
+            undef: { line: { 'stroke': '#e5a84b', 'stroke-dasharray': '4 2', 'filter': 'none' } }
         },
         bits: {
-            bus: { line: { 'stroke-width': '4px' } },
+            bus: { line: { 'stroke-width': '3.5px' } },
             single: { line: { 'stroke-width': '2px' } }
         },
         warning: {
@@ -515,13 +517,9 @@ export const WireView = joint.dia.LinkView.extend({
     _wireToolsView: (typeof window !== 'undefined') ? new joint.dia.ToolsView({
         tools: [
             new joint.linkTools.Vertices({ focusOpacity: 0.5 }),
-            //new joint.linkTools.Segments({ focusOpacity: 0.5 }), //todo: problem with signal reset ??,
+            new joint.linkTools.Segments({ focusOpacity: 0.5 }),
             new tools.CircleSourceArrowhead(),
-            new tools.CircleTargetArrowhead(),
-            new tools.RemoveButton({ distanceShort: '75%', distanceLong: '50' }),
-            new tools.RemoveButton({ distance: '-50', secondary: true }),
-            new tools.MonitorButton({ distanceShort: '25%', distanceLong: '30' }),
-            new tools.MonitorButton({ distance: '-30', secondary: true })
+            new tools.CircleTargetArrowhead()
         ]
     }) : null,
     presentationAttributes: joint.dia.LinkView.addPresentationAttributes({
@@ -648,7 +646,7 @@ export const WireView = joint.dia.LinkView.extend({
 // base class for gates displayed as a box
 export const Box = Gate.define('Box', {
     attrs: {
-        body: { refWidth: 1, refHeight: 1 },
+        body: { refWidth: 1, refHeight: 1, rx: 8, ry: 8, fill: '#2b2d30', stroke: '#43454a', strokeWidth: 1.5 },
         tooltip: { refX: 0, refY: -30, height: 30 }
     }
 }, {
@@ -663,24 +661,51 @@ export const Box = Gate.define('Box', {
         });
         this.trigger('change:size', this, this.prop('size'));
     },
-    markup: Gate.prototype.markup.concat([{
+    markup: [{
             tagName: 'rect',
             className: 'body',
             selector: 'body'
         }
-    ]),
+    ].concat(Gate.prototype.markup),
     markupZoom: [{
         tagName: 'foreignObject',
-        className: 'tooltip',
+        className: 'tooltip zoom-bar',
         selector: 'tooltip',
         children: [{
             tagName: 'body',
             namespaceURI: 'http://www.w3.org/1999/xhtml',
             children: [{
-                tagName: 'a',
-                className: 'zoom',
-                textContent: '🔍',
-                style: { cursor: 'pointer' }
+                tagName: 'div',
+                className: 'zoom-pill',
+                children: [{
+                    tagName: 'a',
+                    className: 'zoom',
+                    title: 'Open subcircuit',
+                    style: { cursor: 'pointer' },
+                    children: [{
+                        tagName: 'svg',
+                        namespaceURI: 'http://www.w3.org/2000/svg',
+                        attributes: {
+                            viewBox: '0 0 16 16',
+                            width: '14',
+                            height: '14',
+                            fill: 'none',
+                            stroke: '#dfe1e5',
+                            'stroke-width': '1.5',
+                            'stroke-linecap': 'round',
+                            'stroke-linejoin': 'round'
+                        },
+                        children: [{
+                            tagName: 'circle',
+                            namespaceURI: 'http://www.w3.org/2000/svg',
+                            attributes: { cx: '6.5', cy: '6.5', r: '4.5' }
+                        }, {
+                            tagName: 'path',
+                            namespaceURI: 'http://www.w3.org/2000/svg',
+                            attributes: { d: 'M9.8 9.8L14 14' }
+                        }]
+                    }]
+                }]
             }]
         }]
     }],
@@ -695,21 +720,55 @@ export const Box = Gate.define('Box', {
 export const BoxView = GateView.extend({
     _autoResizeBox: false,
     render() {
-        //todo: resize Box after port label / IO name / mode / bit size change
         GateView.prototype.render.apply(this, arguments);
-        if (this._autoResizeBox && !this.model.get('box_resized')) {
-            this.model.set('box_resized', true);
-            this.model.prop('size/width', this._calculateBoxWidth());
+        if (this._autoResizeBox) {
+            this._applyCalculatedWidth();
+            if (typeof requestAnimationFrame !== 'undefined') {
+                requestAnimationFrame(() => this._applyCalculatedWidth());
+            }
+        }
+    },
+    _applyCalculatedWidth() {
+        const newWidth = this._calculateBoxWidth();
+        if (newWidth && Math.abs(newWidth - (this.model.prop('size/width') || 0)) > 2) {
+            const h = this.model.prop('size/height') || 36;
+            this.model.resize(newWidth, h);
         }
     },
     _calculateBoxWidth() {
         const leftlabels = Array.from(this.el.querySelectorAll('[port-group=in] > text.iolabel'));
         const rightlabels = Array.from(this.el.querySelectorAll('[port-group=out] > text.iolabel'));
-        const leftwidth = Math.max(...leftlabels.map(x => x.getBBox().width));
-        const rightwidth = Math.max(...rightlabels.map(x => x.getBBox().width));
-        const fixup = x => x == -Infinity ? -5 : x;
-        const width = fixup(leftwidth) + fixup(rightwidth) + 25;
-        return width;
+
+        const getWidth = (el) => {
+            if (!el) return 0;
+            try {
+                const bbox = el.getBBox();
+                if (bbox && bbox.width > 0) return bbox.width;
+            } catch (_) {}
+            const txt = (el.textContent || '').trim();
+            return txt.length > 0 ? txt.length * 7.5 : 0;
+        };
+
+        const leftwidth = leftlabels.length > 0 ? Math.max(...leftlabels.map(getWidth)) : 0;
+        const rightwidth = rightlabels.length > 0 ? Math.max(...rightlabels.map(getWidth)) : 0;
+
+        const labelEl = this.el.querySelector('text.label');
+        let centerTextWidth = 0;
+        if (labelEl) {
+            centerTextWidth = getWidth(labelEl);
+        }
+        if (centerTextWidth === 0) {
+            const raw = (this.model.get('label') || this.model.get('celltype') || '').trim();
+            const txt = raw.startsWith('\\') ? raw.slice(1) : raw;
+            centerTextWidth = txt.length > 0 ? txt.length * 8 : 0;
+        }
+
+        const maxSideWidth = Math.max(leftwidth, rightwidth, 0);
+        const margin = 20; // 20px margin on each side of the center instance label
+        const totalNeeded = 2 * maxSideWidth + centerTextWidth + 2 * (8 + margin);
+
+        const currentWidth = this.model.get('size')?.width || 80;
+        return Math.max(Math.ceil(totalNeeded), currentWidth, 80);
     }
 });
 

@@ -43,6 +43,50 @@ function gateMarkup(children = []) {
     }
 }
 
+function inPortPosition(portsArgs, elBBox) {
+    const n = portsArgs.length;
+    const h = elBBox.height;
+    return portsArgs.map((arg, idx) => {
+        if (arg.x !== undefined && arg.y !== undefined) {
+            return { x: arg.x, y: arg.y };
+        }
+        const y = n === 1 ? h / 2 : (idx + 0.5) * (h / n);
+        const u = h > 0 ? (2 * y / h - 1) : 0;
+        let x = 19;
+        if (arg.curve === 'or') {
+            x = 14.3 + 6.1 * (1 - u * u);
+        } else if (arg.curve === 'xor') {
+            x = 8.5 + 5.7 * (1 - u * u);
+        } else if (arg.curve === 'buf') {
+            x = 18;
+        } else if (arg.x !== undefined) {
+            x = arg.x;
+        }
+        return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+    });
+}
+
+function outPortPosition(portsArgs, elBBox) {
+    const h = elBBox.height;
+    return portsArgs.map((arg) => {
+        if (arg.x !== undefined && arg.y !== undefined) {
+            return { x: arg.x, y: arg.y };
+        }
+        const y = h / 2;
+        let x = 51;
+        if (arg.hasBubble) {
+            x = 60;
+        } else if (arg.gateType === 'or' || arg.gateType === 'xor') {
+            x = 53;
+        } else if (arg.gateType === 'buf') {
+            x = 52;
+        } else if (arg.x !== undefined) {
+            x = arg.x;
+        }
+        return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+    });
+}
+
 // base class for gates
 export const GateSVG = Gate.define('GateSVG', {
     /* default properties */
@@ -51,12 +95,26 @@ export const GateSVG = Gate.define('GateSVG', {
     size: { width: 60, height: 32 },
     ports: {
         groups: {
-            'in': { position: { name: 'left', args: { dx: 30 } }, attrs: { wire: { x2: -50 }, port: { refX: -50 } }, z: -1 },
-            'out': { position: { name: 'right', args: { dx: -30 } }, attrs: { wire: { x2: 50 }, port: { refX: 50 } }, z: -1 }
+            'in': {
+                position: inPortPosition,
+                attrs: {
+                    wire: { x2: 0, display: 'none' },
+                    port: { magnet: 'passive', refX: 0 }
+                },
+                z: -1
+            },
+            'out': {
+                position: outPortPosition,
+                attrs: {
+                    wire: { x2: 0, display: 'none' },
+                    port: { magnet: true, refX: 0 }
+                },
+                z: -1
+            }
         }
     }
 }, {
-    markup: Gate.prototype.markup.concat([gateMarkup()]),
+    markup: [gateMarkup()],
     _gateParams: Gate.prototype._gateParams.concat(['bits'])
 });
 
@@ -64,9 +122,12 @@ export const GateSVG = Gate.define('GateSVG', {
 export const Gate11 = GateSVG.define('Gate11', {}, {
     initialize() {
         const bits = this.get('bits');
+        const curve = this._curveType || 'buf';
+        const hasBubble = Boolean(this._hasBubble);
+        const gateType = this._gateShapeType || 'buf';
         this.get('ports').items = [
-            { id: 'in', group: 'in', dir: 'in', bits: bits },
-            { id: 'out', group: 'out', dir: 'out', bits: bits }
+            { id: 'in', group: 'in', dir: 'in', bits: bits, args: { curve } },
+            { id: 'out', group: 'out', dir: 'out', bits: bits, args: { hasBubble, gateType } }
         ];
         
         GateSVG.prototype.initialize.apply(this, arguments);
@@ -96,32 +157,67 @@ export const GateX1 = GateSVG.define('GateX1', {
 }, {
     initialize() {
         const bits = this.get('bits');
-        const inputs = this.get('inputs');
+        const inputs = this.get('inputs') || 2;
+        const curve = this._curveType || 'and';
+        const hasBubble = Boolean(this._hasBubble);
+        const gateType = this._gateShapeType || 'and';
 
         const ports = [];
         for (let i = 1; i <= inputs; i++)
-            ports.push({ id: 'in' + i, group: 'in', dir: 'in', bits: bits });
-        ports.push({ id: 'out', group: 'out', dir: 'out', bits: bits });
+            ports.push({ id: 'in' + i, group: 'in', dir: 'in', bits: bits, args: { curve } });
+        ports.push({ id: 'out', group: 'out', dir: 'out', bits: bits, args: { hasBubble, gateType } });
         this.get('ports').items = ports;
-        const scaling = inputs / 2;
-        this.set('size', { width: 60 * scaling, height: 32 * scaling });
-        this.attr('body/transform', 'translate(-4, 0) scale('+scaling+')');
 
-        this.prop('ports/groups/in/position/args/dx', 30 * scaling);
-        this.prop('ports/groups/in/attrs/wire/x2', -30 * scaling - 20);
-        this.prop('ports/groups/in/attrs/port/refX', -30 * scaling - 20);
-        this.prop('ports/groups/out/position/args/dx', -30 * scaling);
-        this.prop('ports/groups/out/attrs/wire/x2', 30 * scaling + 20);
-        this.prop('ports/groups/out/attrs/port/refX', 30 * scaling + 20);
+        const h = Math.max(inputs * 16, 32);
+        const sy = h / 32;
+        this.set('size', { width: 60, height: h });
 
         GateSVG.prototype.initialize.apply(this, arguments);
-        
+
+        this.attr('gate/transform', 'scale(1, ' + sy + ')');
+        if (curve === 'xor') {
+            this.attr('xor_arc/transform', 'scale(1, ' + sy + ')');
+        }
+        if (hasBubble) {
+            this.attr('neg_bubble/cy', h / 2);
+            this.attr('neg_bubble/cx', 56);
+            this.attr('neg_bubble/r', 4);
+        }
+
         this.on('change:bits', (_, bits) => {
-            const inputs = this.get('inputs');
+            const currentInputs = this.get('inputs') || 2;
             const param = { out: bits };
-            for (let i = 1; i <= inputs; i++)
+            for (let i = 1; i <= currentInputs; i++)
                 param['in' + i] = bits;
             this._setPortsBits(param);
+        });
+
+        this.on('change:inputs', (_, newInputs) => {
+            const currentBits = this.get('bits');
+            const currentInputs = newInputs || 2;
+            const cCurve = this._curveType || 'and';
+            const cHasBubble = Boolean(this._hasBubble);
+            const cGateType = this._gateShapeType || 'and';
+
+            const newPorts = [];
+            for (let i = 1; i <= currentInputs; i++)
+                newPorts.push({ id: 'in' + i, group: 'in', dir: 'in', bits: currentBits, args: { curve: cCurve } });
+            newPorts.push({ id: 'out', group: 'out', dir: 'out', bits: currentBits, args: { hasBubble: cHasBubble, gateType: cGateType } });
+
+            const newH = Math.max(currentInputs * 16, 32);
+            const newSy = newH / 32;
+            this.set('size', { width: 60, height: newH });
+            this.set('ports', { items: newPorts });
+
+            this.attr('gate/transform', 'scale(1, ' + newSy + ')');
+            if (cCurve === 'xor') {
+                this.attr('xor_arc/transform', 'scale(1, ' + newSy + ')');
+            }
+            if (cHasBubble) {
+                this.attr('neg_bubble/cy', newH / 2);
+                this.attr('neg_bubble/cx', 56);
+                this.attr('neg_bubble/r', 4);
+            }
         });
     },
     operation(data) {
@@ -131,7 +227,7 @@ export const GateX1 = GateSVG.define('GateX1', {
         return { out: this.finoperation(ret) };
     },
     finoperation(val) {
-        return val
+        return val;
     },
     _gateParams: GateSVG.prototype._gateParams.concat(['inputs']),
     _unsupportedPropChanges: GateSVG.prototype._unsupportedPropChanges.concat(['inputs']),
@@ -142,9 +238,12 @@ export const GateX1 = GateSVG.define('GateX1', {
 export const GateReduce = GateSVG.define('GateReduce', {}, {
     initialize() {
         const bits = this.get('bits');
+        const curve = this._curveType || 'and';
+        const hasBubble = Boolean(this._hasBubble);
+        const gateType = this._gateShapeType || 'and';
         this.get('ports').items = [
-            { id: 'in', group: 'in', dir: 'in', bits: bits },
-            { id: 'out', group: 'out', dir: 'out', bits: 1 }
+            { id: 'in', group: 'in', dir: 'in', bits: bits, args: { curve } },
+            { id: 'out', group: 'out', dir: 'out', bits: 1, args: { hasBubble, gateType } }
         ];
         
         GateSVG.prototype.initialize.apply(this, arguments);
@@ -159,6 +258,9 @@ export const GateReduce = GateSVG.define('GateReduce', {}, {
 export const Repeater = Gate11.define('Repeater', {
     attrs: { gate: { d: buf_path }}
 }, {
+    _curveType: 'buf',
+    _hasBubble: false,
+    _gateShapeType: 'buf',
     operation(data) {
         return { out: data.in };
     }
@@ -169,10 +271,13 @@ export const RepeaterView = GateView;
 export const Not = Gate11.define('Not', {
     attrs: { gate: { d: buf_path }}
 }, {
+    _curveType: 'buf',
+    _hasBubble: true,
+    _gateShapeType: 'buf',
     operation(data) {
         return { out: data.in.not() };
     },
-    markup: Gate.prototype.markup.concat([gateMarkup([neg_markup])]),
+    markup: [gateMarkup([neg_markup])],
 });
 export const NotView = GateView;
 
@@ -180,6 +285,9 @@ export const NotView = GateView;
 export const Or = GateX1.define('Or', {
     attrs: { gate: { d: or_path }}
 }, {
+    _curveType: 'or',
+    _hasBubble: false,
+    _gateShapeType: 'or',
     binoperation(in1, in2) {
         return in1.or(in2);
     }
@@ -190,6 +298,9 @@ export const OrView = GateView;
 export const And = GateX1.define('And', {
     attrs: { gate: { d: and_path }}
 }, {
+    _curveType: 'and',
+    _hasBubble: false,
+    _gateShapeType: 'and',
     binoperation(in1, in2) {
         return in1.and(in2);
     }
@@ -200,13 +311,16 @@ export const AndView = GateView;
 export const Nor = GateX1.define('Nor', {
     attrs: { gate: { d: or_path }}
 }, {
+    _curveType: 'or',
+    _hasBubble: true,
+    _gateShapeType: 'or',
     binoperation(in1, in2) {
         return in1.or(in2);
     },
     finoperation(val) {
         return val.not();
     },
-    markup: Gate.prototype.markup.concat([gateMarkup([neg_markup])]),
+    markup: [gateMarkup([neg_markup])],
 });
 export const NorView = GateView;
 
@@ -214,13 +328,16 @@ export const NorView = GateView;
 export const Nand = GateX1.define('Nand', {
     attrs: { gate: { d: and_path }}
 }, {
+    _curveType: 'and',
+    _hasBubble: true,
+    _gateShapeType: 'and',
     binoperation(in1, in2) {
         return in1.and(in2);
     },
     finoperation(val) {
         return val.not();
     },
-    markup: Gate.prototype.markup.concat([gateMarkup([neg_markup])]),
+    markup: [gateMarkup([neg_markup])],
 });
 export const NandView = GateView;
 
@@ -228,10 +345,13 @@ export const NandView = GateView;
 export const Xor = GateX1.define('Xor', {
     attrs: { gate: { d: or_path }}
 }, {
+    _curveType: 'xor',
+    _hasBubble: false,
+    _gateShapeType: 'xor',
     binoperation(in1, in2) {
         return in1.xor(in2);
     },
-    markup: Gate.prototype.markup.concat([gateMarkup([xor_arc_path_markup])]),
+    markup: [gateMarkup([xor_arc_path_markup])],
 });
 export const XorView = GateView;
 
@@ -239,13 +359,16 @@ export const XorView = GateView;
 export const Xnor = GateX1.define('Xnor', {
     attrs: { gate: { d: or_path }}
 }, {
+    _curveType: 'xor',
+    _hasBubble: true,
+    _gateShapeType: 'xor',
     binoperation(in1, in2) {
         return in1.xor(in2);
     },
     finoperation(val) {
         return val.not();
     },
-    markup: Gate.prototype.markup.concat([gateMarkup([xor_arc_path_markup, neg_markup])]),
+    markup: [gateMarkup([xor_arc_path_markup, neg_markup])],
 });
 export const XnorView = GateView;
 
@@ -253,6 +376,9 @@ export const XnorView = GateView;
 export const OrReduce = GateReduce.define('OrReduce', {
     attrs: { gate: { d: or_path }}
 }, {
+    _curveType: 'or',
+    _hasBubble: false,
+    _gateShapeType: 'or',
     operation(data) {
         return { out: data.in.reduceOr() };
     }
@@ -263,10 +389,13 @@ export const OrReduceView = GateView;
 export const NorReduce = GateReduce.define('NorReduce', {
     attrs: { gate: { d: or_path }}
 }, {
+    _curveType: 'or',
+    _hasBubble: true,
+    _gateShapeType: 'or',
     operation(data) {
         return { out: data.in.reduceNor() };
     },
-    markup: GateReduce.prototype.markup.concat([neg_markup])
+    markup: [gateMarkup([neg_markup])]
 });
 export const NorReduceView = GateView;
 
@@ -274,6 +403,9 @@ export const NorReduceView = GateView;
 export const AndReduce = GateReduce.define('AndReduce', {
     attrs: { gate: { d: and_path }}
 }, {
+    _curveType: 'and',
+    _hasBubble: false,
+    _gateShapeType: 'and',
     operation(data) {
         return { out: data.in.reduceAnd() };
     }
@@ -284,10 +416,13 @@ export const AndReduceView = GateView;
 export const NandReduce = GateReduce.define('NandReduce', {
     attrs: { gate: { d: and_path }}
 }, {
+    _curveType: 'and',
+    _hasBubble: true,
+    _gateShapeType: 'and',
     operation(data) {
         return { out: data.in.reduceNand() };
     },
-    markup: Gate.prototype.markup.concat([gateMarkup([neg_markup])]),
+    markup: [gateMarkup([neg_markup])],
 });
 export const NandReduceView = GateView;
 
@@ -295,10 +430,13 @@ export const NandReduceView = GateView;
 export const XorReduce = GateReduce.define('XorReduce', {
     attrs: { gate: { d: or_path }}
 }, {
+    _curveType: 'xor',
+    _hasBubble: false,
+    _gateShapeType: 'xor',
     operation(data) {
         return { out: data.in.reduceXor() };
     },
-    markup: Gate.prototype.markup.concat([gateMarkup([xor_arc_path_markup])]),
+    markup: [gateMarkup([xor_arc_path_markup])],
 });
 export const XorReduceView = GateView;
 
@@ -306,10 +444,13 @@ export const XorReduceView = GateView;
 export const XnorReduce = GateReduce.define('XnorReduce', {
     attrs: { gate: { d: or_path }}
 }, {
+    _curveType: 'xor',
+    _hasBubble: true,
+    _gateShapeType: 'xor',
     operation(data) {
         return { out: data.in.reduceXnor() };
     },
-    markup: Gate.prototype.markup.concat([gateMarkup([xor_arc_path_markup, neg_markup])]),
+    markup: [gateMarkup([xor_arc_path_markup, neg_markup])],
 });
 export const XnorReduceView = GateView;
 
