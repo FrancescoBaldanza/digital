@@ -21,7 +21,9 @@ const tests = [
     {name: 'io', title: 'Input/Output types'},
     {name: 'horner', title: 'Benchmark example'},
     {name: 'latch', title: 'Level-triggered D-latch example'},
-    {name: 'warnings', title: 'Warnings example'}
+    {name: 'warnings', title: 'Warnings example'},
+    {name: 'ffd', title: 'Flip-Flop D (CK, D, Q, ~Q)'},
+    {name: 'verilog_ffd', title: 'Verilog Synthesized: \\FF-D with A_RESET'}
 ];
 
 module.exports = {

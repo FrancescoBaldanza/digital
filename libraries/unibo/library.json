@@ -1,0 +1,75 @@
+{
+  "name": "UniBo",
+  "version": "1.0.0",
+  "description": "Libreria di moduli digitali UniBo",
+  "author": "UniBo",
+  "license": "BSD-2-Clause",
+  "modules": [
+    "FFD",
+    "\\FF-D",
+    "FF_D",
+    "FFT",
+    "\\FF-T",
+    "LatchD",
+    "\\Latch-D",
+    "LatchSR",
+    "\\Latch-SR",
+    "Register",
+    "\\Register",
+    "ShiftRegister",
+    "\\ShiftRegister",
+    "Counter",
+    "\\Counter",
+    "HalfAdder",
+    "\\HalfAdder",
+    "FullAdder",
+    "\\FullAdder",
+    "Adder",
+    "\\Adder",
+    "Decoder",
+    "\\Decoder",
+    "ALU",
+    "\\ALU",
+    "ROM",
+    "\\ROM"
+  ],
+  "categories": {
+    "flip_flops": [
+      "FFD",
+      "\\FF-D",
+      "FF_D",
+      "FFT",
+      "\\FF-T"
+    ],
+    "latches": [
+      "LatchD",
+      "\\Latch-D",
+      "LatchSR",
+      "\\Latch-SR"
+    ],
+    "registers_counters": [
+      "Register",
+      "\\Register",
+      "ShiftRegister",
+      "\\ShiftRegister",
+      "Counter",
+      "\\Counter"
+    ],
+    "combinational": [
+      "HalfAdder",
+      "\\HalfAdder",
+      "FullAdder",
+      "\\FullAdder",
+      "Adder",
+      "\\Adder",
+      "Decoder",
+      "\\Decoder",
+      "ALU",
+      "\\ALU"
+    ],
+    "memory": [
+      "ROM",
+      "\\ROM"
+    ]
+  }
+}

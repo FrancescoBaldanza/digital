@@ -2,3 +2,9 @@
 /node_modules
 /lib
 *.swp
+.idea/
+.DS_Store
+jetbrains-plugin/build/
+jetbrains-plugin/.gradle/
+modules-imgs
+notes

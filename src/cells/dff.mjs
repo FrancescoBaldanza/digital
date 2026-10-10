@@ -1,6 +1,7 @@
 "use strict";
 
-import { Box, BoxView } from './base.mjs';
+import * as joint from '@joint/core';
+import { Box, BoxView, portGroupAttrs } from './base.mjs';
 import { Vector3vl } from '3vl';
 
 // D flip-flops
@@ -31,6 +32,8 @@ export const Dff = Box.define('Dff', {
         if (!this.get('no_data'))
             ports.push({ id: 'in', group: 'in', dir: 'in', bits: bits, portlabel: 'D', labelled: true });
         ports.push({ id: 'out', group: 'out', dir: 'out', bits: bits, portlabel: 'Q', labelled: true });
+        if (this.get('has_qn'))
+            ports.push({ id: 'out_n', group: 'out', dir: 'out', bits: bits, portlabel: 'Q', polarity: false, labelled: true });
         
         if ('arst' in polarity && !this.get('arst_value'))
             this.set('arst_value', Array(bits).fill('0').join(''));
@@ -46,7 +49,7 @@ export const Dff = Box.define('Dff', {
         }
         if ('clock' in polarity) {
             num++;
-            ports.push({ id: 'clk', group: 'in', dir: 'in', bits: 1, polarity: polarity.clock, decor: Box.prototype.decorClock, labelled: true });
+            ports.push({ id: 'clk', group: 'in', dir: 'in', bits: 1, polarity: polarity.clock, portlabel: 'CK', decor: Box.prototype.decorClock, labelled: true });
         }
         if ('set' in polarity) {
             num++;
@@ -69,7 +72,7 @@ export const Dff = Box.define('Dff', {
             ports.push({ id: 'en', group: 'in', dir: 'in', bits: 1, polarity: polarity.enable, labelled: true });
         }
         
-        this.get('size').height = num*16+8;
+        this.get('size').height = Math.max(num, this.get('has_qn') ? 2 : 1)*16+8;
         this.get('ports').items = ports;
         this.last_clk = 0;
         
@@ -78,21 +81,29 @@ export const Dff = Box.define('Dff', {
     _resetPortValue(port) {
         if (port.id == "out" && port.dir == "out")
             return Vector3vl.fromBin(this.get('initial'), port.bits);
+        else if (port.id == "out_n" && port.dir == "out")
+            return Vector3vl.fromBin(this.get('initial'), port.bits).not();
         else return Box.prototype._resetPortValue.call(this, port);
     },
     operation(data) {
         const polarity = this.get('polarity');
         const pol = what => polarity[what] ? 1 : -1
         let last_clk, srbits, srbitmask;
-        const apply_sr = (v) => ({out: srbits ? v.and(srbitmask).or(srbits) : v});
+        const apply_sr = (v) => {
+            const out = srbits ? v.and(srbitmask).or(srbits) : v;
+            return this.get('has_qn') ? { out: out, out_n: out.not() } : { out: out };
+        };
         if ('clock' in polarity) {
             last_clk = this.last_clk;
             this.last_clk = data.clk.get(0);
         }
-        if ('arst' in polarity && data.arst.get(0) == pol('arst'))
-            return { out: Vector3vl.fromBin(this.get('arst_value'), this.get('bits')) };
-        if ('aload' in polarity && data.aload.get(0) == pol('aload'))
-            return { out: data.ain };
+        if ('arst' in polarity && data.arst.get(0) == pol('arst')) {
+            const val = Vector3vl.fromBin(this.get('arst_value'), this.get('bits'));
+            return this.get('has_qn') ? { out: val, out_n: val.not() } : { out: val };
+        }
+        if ('aload' in polarity && data.aload.get(0) == pol('aload')) {
+            return this.get('has_qn') ? { out: data.ain, out_n: data.ain.not() } : { out: data.ain };
+        }
         if ('set' in polarity) {
             srbits = polarity.set ? data.set : data.set.not();
             srbitmask = polarity.set ? data.set.not() : data.set;
@@ -114,11 +125,10 @@ export const Dff = Box.define('Dff', {
             return apply_sr(data.in);
         } else return apply_sr(this.get('outputSignals').out);
     },
-    _gateParams: Box.prototype._gateParams.concat(['polarity', 'bits', 'initial', 'arst_value', 'srst_value', 'enable_srst', 'no_data']),
-    _unsupportedPropChanges: Box.prototype._unsupportedPropChanges.concat(['polarity', 'bits', 'initial', 'arst_value', 'srst_value', 'enable_srst', 'no_data']),
+    _gateParams: Box.prototype._gateParams.concat(['polarity', 'bits', 'initial', 'arst_value', 'srst_value', 'enable_srst', 'no_data', 'has_qn']),
+    _unsupportedPropChanges: Box.prototype._unsupportedPropChanges.concat(['polarity', 'bits', 'initial', 'arst_value', 'srst_value', 'enable_srst', 'no_data', 'has_qn']),
     _gateKind: 'stateful'
 });
 export const DffView = BoxView.extend({
     _autoResizeBox: true
 });
-

@@ -8,6 +8,7 @@ import * as engines from './engines.mjs';
 import * as tools from './tools.mjs';
 import * as transform from './transform.mjs';
 import { SynchEngine } from './engines/synch.mjs';
+import { registry } from './libraries/registry.mjs';
 
 export { cells, tools, engines, transform };
     
@@ -66,7 +67,15 @@ export function getCellType(tp) {
         '$display7': cells.Display7,
     };
     if (tp in types) return types[tp];
-    else return cells.Subcircuit;
+
+    // Modular library lookup (e.g. UniBo modules)
+    const normalized = typeof tp === 'string' && tp.startsWith('\\') ? tp.slice(1) : tp;
+    const mod = registry.findModule(tp) || registry.findModule(normalized);
+    if (mod) {
+        return mod.cellClass || cells.Subcircuit;
+    }
+
+    return cells.Subcircuit;
 }
         
 export class HeadlessCircuit {
@@ -154,14 +163,43 @@ export class HeadlessCircuit {
             if (cell.get('warning')) changeWarnings(-1);
         });
         let laid_out = false;
+        const devConnectedPorts = {};
+        for (const conn of data.connectors || []) {
+            if (conn.to && conn.to.id) {
+                devConnectedPorts[conn.to.id] = devConnectedPorts[conn.to.id] || new Set();
+                devConnectedPorts[conn.to.id].add(conn.to.port);
+            }
+            if (conn.from && conn.from.id) {
+                devConnectedPorts[conn.from.id] = devConnectedPorts[conn.from.id] || new Set();
+                devConnectedPorts[conn.from.id].add(conn.from.port);
+            }
+        }
         for (const devid in data.devices) {
             const dev = data.devices[devid];
             if (dev.position) laid_out = true;
-            const cellType = (dev.type in this._cells) ? this._cells[dev.type] : getCellType(dev.celltype);
+            const subName = dev.celltype || dev.type;
+            const customType = dev.celltype ? getCellType(dev.celltype) : null;
+            const cellType = (customType && customType !== this._cells.Subcircuit)
+                ? customType
+                : ((dev.type in this._cells) ? this._cells[dev.type] : getCellType(subName));
             const cellArgs = joint.util.clone(dev);
             cellArgs.id = devid;
-            if (cellType == this._cells.Subcircuit)
-                cellArgs.graph = this._makeGraph(subcircuits[dev.celltype], subcircuits, { nested: true });
+            cellArgs.connectedPorts = devConnectedPorts[devid] || new Set();
+            if (cellType !== this._cells.Subcircuit) {
+                delete cellArgs.type;
+            }
+            if (cellType == this._cells.Subcircuit) {
+                cellArgs.celltype = cellArgs.celltype || subName;
+                if (subcircuits && subcircuits[subName]) {
+                    cellArgs.graph = this._makeGraph(subcircuits[subName], subcircuits, { nested: true });
+                } else {
+                    const normalized = typeof subName === 'string' && subName.startsWith('\\') ? subName.slice(1) : subName;
+                    const mod = registry.findModule(subName) || registry.findModule(normalized);
+                    if (mod) {
+                        cellArgs.graph = this._makeGraphFromModule(mod, subcircuits);
+                    }
+                }
+            }
             if (this._defaultCombinationalPropagation !== undefined && !('propagation' in cellArgs) && cellType.prototype._gateKind == 'combinational')
                 cellArgs.propagation = this._defaultCombinationalPropagation;
             const cell = new cellType(cellArgs);
@@ -177,6 +215,35 @@ export class HeadlessCircuit {
             }));
         }
         if (laid_out) graph.set('laid_out', true);
+        return graph;
+    }
+    _makeGraphFromModule(mod, subcircuits) {
+        if (mod.subcircuit) {
+            return this._makeGraph(mod.subcircuit, subcircuits, { nested: true });
+        }
+        const graph = new joint.dia.Graph();
+        graph._display3vl = this._display3vl;
+        graph._warnings = 0;
+        graph.set('subcircuit', true);
+
+        if (mod.inputs && Array.isArray(mod.inputs)) {
+            for (const input of mod.inputs) {
+                const inCell = new this._cells.Input({
+                    net: input.name,
+                    bits: input.bits || 1
+                });
+                graph.addCell(inCell);
+            }
+        }
+        if (mod.outputs && Array.isArray(mod.outputs)) {
+            for (const output of mod.outputs) {
+                const outCell = new this._cells.Output({
+                    net: output.name,
+                    bits: output.bits || 1
+                });
+                graph.addCell(outCell);
+            }
+        }
         return graph;
     }
     updateGatesNext(opts) {
