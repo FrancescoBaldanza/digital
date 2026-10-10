@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DigitalJS Preview</title>
+  <script defer src="./main.js"></script>
+  <style>
+    :root {
+      --bg-color: #1e1f22;
+      --toolbar-bg: #2b2d30;
+      --border-color: #393b40;
+      --border-hover: #4e5157;
+      --text-color: #dfe1e5;
+      --text-secondary: #bcbec4;
+      --text-muted: #868a98;
+      --accent-color: #3574f0;
+      --accent-hover: #4682f7;
+      --run-green: #59a869;
+      --run-green-glow: rgba(89, 168, 105, 0.4);
+      --run-green-bg: rgba(89, 168, 105, 0.16);
+      --warn-color: #e5a84b;
+      --error-bg: #3c1f1f;
+      --error-border: #6b2b2b;
+      --error-text: #f75454;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "JetBrains Sans", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background-color: var(--toolbar-bg);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 12px;
+      flex-wrap: wrap;
+      user-select: none;
+      z-index: 100;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 26px;
+      padding: 0 8px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--text-color);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-hover);
+      color: #ffffff;
+    }
+
+    .btn:active {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .btn-icon-only {
+      width: 26px;
+      padding: 0;
+    }
+
+    /* Compile button */
+    #btn-compile {
+      color: var(--text-secondary);
+    }
+    #btn-compile:hover {
+      color: #ffffff;
+    }
+
+    /* Unified Run / Pause toggle button */
+    #btn-run-pause {
+      min-width: 72px;
+      border-color: rgba(89, 168, 105, 0.35);
+      background: rgba(89, 168, 105, 0.06);
+      color: var(--text-color);
+    }
+
+    #btn-run-pause:hover {
+      border-color: var(--run-green);
+      background: rgba(89, 168, 105, 0.12);
+      color: #ffffff;
+    }
+
+    /* Illuminated active state for Running */
+    #btn-run-pause.is-running {
+      background: var(--run-green-bg);
+      border-color: var(--run-green);
+      color: #8be09b;
+      box-shadow: 0 0 10px var(--run-green-glow), inset 0 0 4px rgba(89, 168, 105, 0.2);
+    }
+
+    #btn-run-pause.is-running:hover {
+      background: rgba(89, 168, 105, 0.25);
+      box-shadow: 0 0 14px rgba(89, 168, 105, 0.6), inset 0 0 6px rgba(89, 168, 105, 0.3);
+      color: #ffffff;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .jb-icon {
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .separator {
+      width: 1px;
+      height: 16px;
+      background-color: var(--border-color);
+      margin: 0 3px;
+    }
+
+    /* Toolbar Checkbox */
+    .toolbar-checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--text-secondary);
+      user-select: none;
+      padding: 0 4px;
+      height: 26px;
+      border-radius: 4px;
+      transition: color 0.15s ease;
+    }
+
+    .toolbar-checkbox:hover {
+      color: var(--text-color);
+    }
+
+    .toolbar-checkbox input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .checkbox-custom {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--border-hover);
+      border-radius: 3px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .checkbox-custom .check-icon {
+      display: none;
+      color: #ffffff;
+    }
+
+    .toolbar-checkbox input[type="checkbox"]:checked + .checkbox-custom {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+
+    .toolbar-checkbox input[type="checkbox"]:checked + .checkbox-custom .check-icon {
+      display: block;
+    }
+
+    /* Status Badge */
+    #status-badge {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--text-muted);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .dot-ready {
+      background-color: var(--accent-color);
+      box-shadow: 0 0 6px var(--accent-color);
+    }
+
+    .dot-running {
+      background-color: var(--run-green);
+      box-shadow: 0 0 8px var(--run-green);
+    }
+
+    .dot-paused {
+      background-color: var(--text-muted);
+      box-shadow: 0 0 3px var(--text-muted);
+    }
+
+    .dot-loading {
+      background-color: var(--warn-color);
+      box-shadow: 0 0 8px var(--warn-color);
+      animation: status-pulse 1.2s infinite ease-in-out;
+    }
+
+    .dot-error {
+      background-color: var(--error-text);
+      box-shadow: 0 0 8px var(--error-text);
+    }
+
+    @keyframes status-pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.35);
+        opacity: 0.5;
+      }
+    }
+
+    /* Error banner */
+    #error-banner {
+      display: none;
+      align-items: flex-start;
+      gap: 8px;
+      background-color: var(--error-bg);
+      border-bottom: 1px solid var(--error-border);
+      color: #ff9e9e;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space: pre-wrap;
+      max-height: 120px;
+      overflow-y: auto;
+      z-index: 99;
+    }
+
+    #error-banner .icon-error {
+      color: var(--error-text);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Paper & Canvas */
+    #paper-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      background-image: radial-gradient(var(--border-color) 1.2px, transparent 1.2px);
+      background-size: 20px 20px;
+    }
+
+    #paper {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Empty state */
+    .empty-state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      pointer-events: none;
+      text-align: center;
+    }
+
+    .empty-icon {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    .empty-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .empty-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<div id="toolbar">
+  <!-- Compile action -->
+  <button id="btn-compile" class="btn" title="Compile Verilog source (trigger synthesis)">
+    <span class="btn-icon">
+      <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="8.5" y="1.5" width="4.5" height="7" rx="1" transform="rotate(45 10.75 5)" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M7 9 L2.5 13.5 C2.1 13.9 1.5 13.9 1.1 13.5 C0.7 13.1 0.7 12.5 1.1 12.1 L5.6 7.6" stroke-width="1.4"/>
+      </svg>
+    </span>
+    <span class="btn-label">Compile</span>
+  </button>
+
+  <!-- Unified Run / Pause toggle -->
+  <button id="btn-run-pause" class="btn" title="Start simulation (Space)">
+    <span class="btn-icon">
+      <svg class="jb-icon icon-play" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#59a869" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5,3 13,8 5,13" fill="#59a869" fill-opacity="0.2" stroke="#59a869" stroke-width="1.5"/>
+      </svg>
+    </span>
+    <span class="btn-label">Run</span>
+  </button>
+
+  <!-- Reset action -->
+  <button id="btn-reset" class="btn" title="Restart / Reset simulation state">
+    <span class="btn-icon">
+      <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13.5 8 A5.5 5.5 0 1 1 11.8 4.1 L14 4"/>
+        <polyline points="14 1.5 14 4.5 11 4.5"/>
+      </svg>
+    </span>
+    <span class="btn-label">Reset</span>
+  </button>
+
+  <div class="separator"></div>
+
+  <!-- Zoom & View controls -->
+  <button id="btn-zoom-in" class="btn btn-icon-only" title="Zoom in (+)">
+    <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <line x1="8" y1="3" x2="8" y2="13"/>
+      <line x1="3" y1="8" x2="13" y2="8"/>
+    </svg>
+  </button>
+
+  <button id="btn-zoom-out" class="btn btn-icon-only" title="Zoom out (-)">
+    <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <line x1="3" y1="8" x2="13" y2="8"/>
+    </svg>
+  </button>
+
+  <button id="btn-fit" class="btn btn-icon-only" title="Fit circuit to view">
+    <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5.5V3a.5.5 0 0 1 .5-.5h2.5M10.5 2.5H13a.5.5 0 0 1 .5.5v2.5M13.5 10.5V13a.5.5 0 0 1-.5.5h-2.5M5.5 13.5H3a.5.5 0 0 1-.5-.5v-2.5"/>
+    </svg>
+  </button>
+
+  <div class="separator"></div>
+
+  <!-- Layout Mode -->
+  <label class="toolbar-checkbox" title="Fix component positions (disable manual dragging)">
+    <input type="checkbox" id="chk-fixed">
+    <span class="checkbox-custom">
+      <svg class="check-icon" viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="2.5 6 4.5 8.5 9.5 3.5"/>
+      </svg>
+    </span>
+    <span>Fixed Layout</span>
+  </label>
+
+  <!-- Status badge -->
+  <div id="status-badge" class="status-ready" title="Simulation state">
+    <span class="status-dot dot-ready" id="status-dot"></span>
+    <span id="status-text">Ready</span>
+  </div>
+</div>
+
+<div id="error-banner">
+  <svg class="jb-icon icon-error" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="8" cy="8" r="6"/>
+    <line x1="8" y1="5" x2="8" y2="8.5"/>
+    <circle cx="8" cy="11.2" r="0.75" fill="currentColor"/>
+  </svg>
+  <span id="error-text"></span>
+</div>
+
+<div id="paper-container">
+  <div id="empty-state" class="empty-state">
+    <svg class="empty-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="5" width="14" height="14" rx="2" fill="#2b2d30"/>
+      <path d="M9 9h6v6H9z" stroke-width="1.3"/>
+      <path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/>
+    </svg>
+    <div class="empty-title">DigitalJS Circuit Preview</div>
+    <div class="empty-subtitle">Modify or compile Verilog code to visualize and simulate the circuit</div>
+  </div>
+  <div id="paper"></div>
+</div>
+
+<script>
+  let circuit = null;
+  let paper = null;
+  let currentCircuitJson = null;
+  let zoomLevel = 1.0;
+
+  const PLAY_SVG = `<svg class="jb-icon icon-play" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#59a869" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="5,3 13,8 5,13" fill="#59a869" fill-opacity="0.2" stroke="#59a869" stroke-width="1.5"/>
+  </svg>`;
+
+  const PAUSE_SVG = `<svg class="jb-icon icon-pause" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4.5" y="3.5" width="2.2" height="9" rx="0.75" fill="currentColor" fill-opacity="0.2"/>
+    <rect x="9.3" y="3.5" width="2.2" height="9" rx="0.75" fill="currentColor" fill-opacity="0.2"/>
+  </svg>`;
+
+  function decodeUtf8(base64) {
+    try {
+      const binString = atob(base64);
+      const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0));
+      return new TextDecoder().decode(bytes);
+    } catch(e) {
+      console.error("UTF8 decode error:", e);
+      return atob(base64);
+    }
+  }
+
+  function setStatus(text, type) {
+    const badgeEl = document.getElementById('status-badge');
+    const textEl = document.getElementById('status-text');
+    const dotEl = document.getElementById('status-dot');
+    textEl.textContent = text;
+
+    dotEl.className = 'status-dot';
+    badgeEl.className = '';
+
+    switch (type) {
+      case 'error':
+        dotEl.classList.add('dot-error');
+        badgeEl.classList.add('status-error');
+        break;
+      case 'loading':
+        dotEl.classList.add('dot-loading');
+        badgeEl.classList.add('status-loading');
+        break;
+      case 'running':
+        dotEl.classList.add('dot-running');
+        badgeEl.classList.add('status-running');
+        break;
+      case 'paused':
+        dotEl.classList.add('dot-paused');
+        badgeEl.classList.add('status-paused');
+        break;
+      case 'ready':
+      default:
+        dotEl.classList.add('dot-ready');
+        badgeEl.classList.add('status-ready');
+        break;
+    }
+  }
+
+  function hideError() {
+    const banner = document.getElementById('error-banner');
+    banner.style.display = 'none';
+    document.getElementById('error-text').textContent = '';
+  }
+
+  function showError(msg) {
+    const banner = document.getElementById('error-banner');
+    const errorText = document.getElementById('error-text');
+    errorText.textContent = msg;
+    banner.style.display = 'flex';
+    setStatus('Error', 'error');
+  }
+
+  function destroyCurrentCircuit() {
+    if (circuit) {
+      try {
+        circuit.stop();
+        circuit.trigger('shutdown');
+      } catch(_) {}
+      circuit = null;
+    }
+    const container = document.getElementById('paper');
+    container.innerHTML = '';
+    paper = null;
+  }
+
+  function updatePlayState() {
+    const btn = document.getElementById('btn-run-pause');
+    const iconSpan = btn.querySelector('.btn-icon');
+    const labelSpan = btn.querySelector('.btn-label');
+
+    if (circuit && circuit.running) {
+      btn.classList.add('is-running');
+      btn.setAttribute('title', 'Pause simulation (Space)');
+      iconSpan.innerHTML = PAUSE_SVG;
+      if (labelSpan) labelSpan.textContent = 'Pause';
+      setStatus('Running', 'running');
+    } else {
+      btn.classList.remove('is-running');
+      btn.setAttribute('title', 'Start simulation (Space)');
+      iconSpan.innerHTML = PLAY_SVG;
+      if (labelSpan) labelSpan.textContent = 'Run';
+      if (circuit) {
+        setStatus('Paused', 'paused');
+      } else {
+        setStatus('Ready', 'ready');
+      }
+    }
+  }
+
+  function toggleSimulation() {
+    if (!circuit) return;
+    if (circuit.running) {
+      circuit.stop();
+    } else {
+      circuit.start();
+    }
+    updatePlayState();
+  }
+
+  function triggerCompile() {
+    setStatus('Synthesizing...', 'loading');
+    if (typeof window.triggerCompileNative === 'function') {
+      window.triggerCompileNative();
+    } else if (typeof window.cefQuery === 'function') {
+      window.cefQuery({
+        request: 'compile',
+        onSuccess: function(res) {
+          console.log('IDE compilation triggered successfully:', res);
+        },
+        onFailure: function(errCode, errMsg) {
+          console.warn('IDE compilation query failed:', errMsg);
+        }
+      });
+    } else if (typeof window.jbCompile === 'function') {
+      window.jbCompile();
+    } else {
+      console.log('triggerCompile called (waiting for IDE compilation/synthesis)');
+    }
+  }
+
+  function resetCircuit() {
+    if (circuit && typeof circuit.reset === 'function') {
+      try {
+        circuit.reset();
+        updatePlayState();
+        return;
+      } catch (e) {
+        console.warn('circuit.reset() exception:', e);
+      }
+    }
+    if (currentCircuitJson) {
+      loadCircuit(currentCircuitJson);
+    }
+  }
+
+  function zoomIn() {
+    if (paper) {
+      zoomLevel = Math.min(zoomLevel * 1.25, 5.0);
+      paper.scale(zoomLevel);
+    }
+  }
+
+  function zoomOut() {
+    if (paper) {
+      zoomLevel = Math.max(zoomLevel / 1.25, 0.2);
+      paper.scale(zoomLevel);
+    }
+  }
+
+  function fitView() {
+    if (paper) {
+      zoomLevel = 1.0;
+      paper.scale(1.0);
+      paper.fitToContent({ padding: 30, allowNewOrigin: 'any' });
+    }
+  }
+
+  function loadCircuit(json) {
+    hideError();
+    document.getElementById('empty-state').style.display = 'none';
+
+    currentCircuitJson = json;
+    destroyCurrentCircuit();
+
+    if (!window.digitaljs || !window.digitaljs.Circuit) {
+      setTimeout(() => loadCircuit(json), 100);
+      return;
+    }
+
+    try {
+      circuit = new window.digitaljs.Circuit(json, { layoutEngine: "elkjs" });
+      paper = circuit.displayOn($('#paper'));
+
+      const isFixed = document.getElementById('chk-fixed').checked;
+      if (paper && paper.fixed) {
+        paper.fixed(isFixed);
+      }
+
+      circuit.on('changeRunning', () => {
+        updatePlayState();
+      });
+
+      circuit.start();
+      updatePlayState();
+    } catch (e) {
+      console.error('Error instantiating DigitalJS Circuit:', e);
+      showError('Render Error: ' + e.message);
+    }
+  }
+
+  // Public bridge methods callable from Kotlin / JCEF
+  window.loadCircuitFromBase64 = function(b64) {
+    try {
+      const jsonStr = decodeUtf8(b64);
+      const data = JSON.parse(jsonStr);
+      loadCircuit(data);
+    } catch (e) {
+      console.error('Failed to parse circuit payload:', e);
+      showError('Failed to parse circuit: ' + e.message);
+    }
+  };
+
+  window.showErrorFromBase64 = function(b64) {
+    try {
+      const msg = decodeUtf8(b64);
+      showError(msg);
+    } catch (e) {
+      showError(b64);
+    }
+  };
+
+  window.setSynthesizing = function() {
+    setStatus('Synthesizing...', 'loading');
+  };
+
+  window.triggerCompile = triggerCompile;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('btn-compile').addEventListener('click', triggerCompile);
+    document.getElementById('btn-run-pause').addEventListener('click', toggleSimulation);
+    document.getElementById('btn-reset').addEventListener('click', resetCircuit);
+    document.getElementById('btn-zoom-in').addEventListener('click', zoomIn);
+    document.getElementById('btn-zoom-out').addEventListener('click', zoomOut);
+    document.getElementById('btn-fit').addEventListener('click', fitView);
+
+    document.getElementById('chk-fixed').addEventListener('change', (e) => {
+      if (paper && paper.fixed) {
+        paper.fixed(e.target.checked);
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      if (e.code === 'Space') {
+        e.preventDefault();
+        toggleSimulation();
+      }
+    });
+  });
+</script>
+</body>
+</html>
