@@ -9,6 +9,7 @@ console.warn = () => {};
 console.log = () => {};
 
 const { yosys2digitaljs, io_ui } = require('yosys2digitaljs/core');
+const { transformCircuit } = require('../lib/transform.js');
 
 function findBinary(name, extraPaths = []) {
     const envPath = process.env.PATH || '';
@@ -37,6 +38,7 @@ const yosysBin = process.env.YOSYS_PATH || findBinary('yosys', ['/opt/homebrew/b
 const tmpYosys = path.join(os.tmpdir(), 'yosys_synth_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8) + '.json');
 
 let tmpBundle = null;
+let tmpSymlinks = [];
 try {
     const vContent = fs.existsSync(vFile) ? fs.readFileSync(vFile, 'utf8') : '';
     const hasUniboInclude = vContent.includes('unibo.v') || vContent.includes('modules.v');
@@ -82,8 +84,29 @@ try {
         targetDirs.add(path.dirname(originalFilePath));
     }
 
-    // Build include directory flags for Yosys
-    const includeDirs = Array.from(targetDirs).filter(d => fs.existsSync(d) && fs.statSync(d).isDirectory());
+    // Build safe include directory flags for Yosys (handling spaces and non-verilog folders)
+    let tmpSymlinks = [];
+    const includeDirs = [];
+    for (const d of targetDirs) {
+        if (!fs.existsSync(d)) continue;
+        try {
+            const stat = fs.statSync(d);
+            if (!stat.isDirectory()) continue;
+            const entries = fs.readdirSync(d);
+            const hasVerilog = entries.some(f => f.endsWith('.v') || f.endsWith('.sv') || f.endsWith('.vh'));
+            if (!hasVerilog) continue;
+            if (!d.includes(' ')) {
+                includeDirs.push(d);
+            } else {
+                const linkName = path.join(os.tmpdir(), 'djs_inc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8));
+                try {
+                    fs.symlinkSync(d, linkName, 'dir');
+                    tmpSymlinks.push(linkName);
+                    includeDirs.push(linkName);
+                } catch (_) {}
+            }
+        } catch (_) {}
+    }
     const incArgs = includeDirs.map(d => `-I${d}`).join(' ');
 
     let readSources = '';
@@ -104,7 +127,8 @@ try {
     const djs = yosys2digitaljs(yosysJson);
     io_ui(djs);
 
-    process.stdout.write(JSON.stringify({ status: 'ok', circuit: djs }));
+    const transformed = transformCircuit(djs);
+    process.stdout.write(JSON.stringify({ status: 'ok', circuit: transformed }));
 } catch (err) {
     const stderr = err.stderr ? err.stderr.toString('utf8') : '';
     const msg = stderr.trim() || err.message || 'Unknown error during synthesis';
@@ -116,6 +140,11 @@ try {
         }
         if (tmpBundle && fs.existsSync(tmpBundle)) {
             fs.unlinkSync(tmpBundle);
+        }
+        for (const link of tmpSymlinks) {
+            if (fs.existsSync(link)) {
+                fs.unlinkSync(link);
+            }
         }
     } catch (_) {}
 }

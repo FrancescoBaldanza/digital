@@ -16,8 +16,12 @@ public class WebResourcesManager {
     private static final String[] ASSETS = {
             "index.html",
             "main.js",
-            "285.main.js",
+            "288.main.js",
+            "550.main.js",
             "821.main.js",
+            "src_engines_worker-worker_mjs.main.js",
+            "vendors-node_modules_3vl_dist_index_js-node_modules_jquery_dist_jquery-exposed_js-node_module-80f129.main.js",
+            "digitaljs_icon.svg",
             "synthesize.bundle.js"
     };
 
@@ -27,6 +31,12 @@ public class WebResourcesManager {
         }
 
         // 1. Check if running unpacked in plugins folder
+        Path modernDir = Paths.get(PathManager.getPluginsPath(), "digital-preview", "web");
+        if (Files.exists(modernDir.resolve("index.html"))) {
+            cachedWebDir = modernDir;
+            return cachedWebDir;
+        }
+
         Path pluginsDir = Paths.get(PathManager.getPluginsPath(), "digitaljs-preview", "web");
         if (Files.exists(pluginsDir.resolve("index.html"))) {
             cachedWebDir = pluginsDir;

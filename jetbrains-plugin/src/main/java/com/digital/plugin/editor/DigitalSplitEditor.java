@@ -23,11 +23,21 @@ public class DigitalSplitEditor extends TextEditorWithPreview {
         // Connect manual compile callback from webview Compile button
         preview.setOnCompileRequested(this::compile);
 
+        // Track changes without auto-compiling: typing sets dirty state
+        Document document = editor.getEditor().getDocument();
+        document.addDocumentListener(new DocumentListener() {
+            @Override
+            public void documentChanged(@NotNull DocumentEvent event) {
+                previewEditor.setDirty(true);
+            }
+        }, this);
+
         // Initial render on file open
         compile();
     }
 
     public void compile() {
+        previewEditor.setDirty(false);
         alarm.cancelAllRequests();
         alarm.addRequest(() -> {
             Document document = ((TextEditor) myEditor).getEditor().getDocument();

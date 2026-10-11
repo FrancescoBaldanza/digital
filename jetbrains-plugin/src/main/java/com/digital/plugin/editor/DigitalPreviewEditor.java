@@ -85,9 +85,15 @@ public class DigitalPreviewEditor extends UserDataHolderBase implements FileEdit
         }
     }
 
+    public void setDirty(boolean dirty) {
+        if (isPageLoaded) {
+            executeJs("if (window.setDirty) { window.setDirty(" + dirty + "); }");
+        }
+    }
+
     public void synthesizeAndRender(String verilogSource, String filePath) {
         if (isPageLoaded) {
-            executeJs("window.setSynthesizing();");
+            executeJs("if (window.setDirty) { window.setDirty(false); } window.setSynthesizing();");
         }
 
         DigitalSynthesizer.SynthesisResult result = DigitalSynthesizer.synthesize(verilogSource, filePath);

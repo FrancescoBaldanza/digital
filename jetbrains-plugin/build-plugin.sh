@@ -38,15 +38,17 @@ WEBSTORM_PLUGINS="$HOME/Library/Application Support/JetBrains/WebStorm2026.2/plu
 CLION_PLUGINS="$HOME/Library/Application Support/JetBrains/CLion2026.2/plugins"
 
 if [ -d "$WEBSTORM_PLUGINS" ]; then
-    rm -rf "$WEBSTORM_PLUGINS/digital-preview"
+    rm -rf "$WEBSTORM_PLUGINS/digital-preview" "$WEBSTORM_PLUGINS/digitaljs-preview"
     cp -r "$DIR/build/dist/digital-preview" "$WEBSTORM_PLUGINS/"
-    echo "    ✓ Installed into WebStorm 2026.2 ($WEBSTORM_PLUGINS/digital-preview)"
+    cp -r "$DIR/build/dist/digital-preview" "$WEBSTORM_PLUGINS/digitaljs-preview"
+    echo "    ✓ Installed into WebStorm 2026.2"
 fi
 
 if [ -d "$CLION_PLUGINS" ]; then
-    rm -rf "$CLION_PLUGINS/digital-preview"
+    rm -rf "$CLION_PLUGINS/digital-preview" "$CLION_PLUGINS/digitaljs-preview"
     cp -r "$DIR/build/dist/digital-preview" "$CLION_PLUGINS/"
-    echo "    ✓ Installed into CLion 2026.2 ($CLION_PLUGINS/digital-preview)"
+    cp -r "$DIR/build/dist/digital-preview" "$CLION_PLUGINS/digitaljs-preview"
+    echo "    ✓ Installed into CLion 2026.2"
 fi
 
 echo "==> Build and installation complete!"
