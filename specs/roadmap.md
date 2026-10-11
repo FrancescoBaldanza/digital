@@ -7,16 +7,16 @@ Each phase contains an atomic checklist of deliverables.
 Obiettivo: creare la base del progetto con struttura `specs/`, pulizia del codice, estensione JetBrains base e interfaccia a 3 colonne con compilazione manuale.
 
 - [x] Creare struttura `specs/` con costituzione del progetto (mission, tech-stack, roadmap)
-- [ ] Pulire il progetto: rimuovere file duplicati tra `libraries/` e `src/libraries/`
-- [ ] Controllare la cartella `review/`: spiegare a cosa serve ogni file e chiedere all'utente se può essere eliminato
-- [ ] Generare una nuova icona moderna per il progetto che simboleggi le reti logiche digitali
-- [ ] Spostare esempi da `examples/` in `tests/` come unica cartella per istanze di demo
-- [ ] Aggiungere `unibo.v` e librerie UniBo a `.gitignore`
-- [ ] Creare estensione JetBrains base con preview del circuito
-- [ ] Implementare interfaccia a 3 colonne: File Explorer, Editor Verilog, Visualizzazione circuito
-- [ ] Implementare compilazione manuale con bottone Compile (non real-time)
-- [ ] Verificare che la conversione Verilog → circuito funzioni con yosys2digitaljs
-- [ ] Verificare che i test esistenti passino (`npm test`)
+- [x] Pulire il progetto: rimuovere file duplicati tra `libraries/` e `src/libraries/`
+- [x] Controllare la cartella `review/`: spiegare a cosa serve ogni file e chiedere all'utente se può essere eliminato
+- [x] Generare una nuova icona moderna per il progetto che simboleggi le reti logiche digitali
+- [x] Spostare esempi da `examples/` in `tests/` come unica cartella per istanze di demo
+- [x] Aggiungere `unibo.v` e librerie UniBo a `.gitignore`
+- [x] Creare estensione JetBrains base con preview del circuito
+- [x] Implementare interfaccia a 3 colonne: File Explorer, Editor Verilog, Visualizzazione circuito
+- [x] Implementare compilazione manuale con bottone Compile (non real-time)
+- [x] Verificare che la conversione Verilog → circuito funzioni con yosys2digitaljs
+- [x] Verificare che i test esistenti passino (`npm test`)
 
 ## Phase 2: Moduli Personalizzati
 Obiettivo: API OOP per definire moduli custom, sistema librerie (built-in + custom), libreria UniBo corretta.

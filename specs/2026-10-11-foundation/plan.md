@@ -10,6 +10,7 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 1.3 Audit files in `review/`, document the purpose of each item, and clean up obsolete or redundant files
 - [x] 1.4 Consolidate `examples/` into `tests/` so that `tests/` is the single canonical folder for fixtures, test circuits, and demos
 - [x] 1.5 Generate and integrate a modern vector project icon representing digital logic circuits
+- [ ] 1.6 sostituisci tutte le parti di codice e nomi nel progetto che chiamano l'applicazione `DigitalJS` con `Digital`
 
 ### Task Group 2: Core Synthesis & Compilation Flow
 - [x] 2.1 Verify and configure `yosys2digitaljs` synthesis pipeline for manual Verilog-to-circuit conversion
@@ -25,7 +26,7 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 3.5 Configure the JetBrains IDE plugin base to embed the web preview via JCEF WebView and bridge file updates
 
 ### Task Group 4: Verification & Automated Tests
-- [ ] 4.1 Run full test suite with `npm test` and ensure all tests pass
-- [ ] 4.2 Verify manual compilation with sample circuits in `tests/` (Half Adder, Multiplexer, Counter)
-- [ ] 4.3 Verify error handling by testing malformed Verilog code and checking UI error banner
-- [ ] 4.4 Verify clean git status with tracked `specs/` and ignored UniBo files
+- [x] 4.1 Run full test suite with `npm test` and ensure all tests pass
+- [x] 4.2 Verify manual compilation with sample circuits in `tests/` (Half Adder, Multiplexer, Counter)
+- [x] 4.3 Verify error handling by testing malformed Verilog code and checking UI error banner
+- [x] 4.4 Verify clean git status with tracked `specs/` and ignored UniBo files

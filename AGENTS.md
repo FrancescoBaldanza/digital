@@ -29,7 +29,7 @@ When the user invokes a skill or issues a matching request, **you must read the 
 | :--- | :--- | :--- |
 | `/build-constitution`<br>*(or "build constitution", "setup specs")* | [`.junie/skills/build-constitution/SKILL.md`](.junie/skills/build-constitution/SKILL.md) | Interviews the user in chat across 3 themes (Mission, Tech Stack, Roadmap) and generates foundational specs. |
 | `/plan-phase [N]`<br>*(or "plan phase", "feature spec")* | [`.junie/skills/plan-phase/SKILL.md`](.junie/skills/plan-phase/SKILL.md) | Finds target phase in roadmap, creates git branch `phase-N-<slug>`, interviews user, and drafts dated spec directory. |
-| `/implement-phase`<br>*(or "implement phase", "execute plan")* | [`.junie/skills/implement-phase/SKILL.md`](.junie/skills/implement-phase/SKILL.md) | Reads `plan.md`, implements task groups sequentially, respects `tech-stack.md`, and checks off `[x]` items. |
+| `/implement-phase`<br>*(or "implement phase", "execute plan")* | [`.junie/skills/implement-phase/SKILL.md`](.junie/skills/implement-phase/SKILL.md) | Reads `plan.md`, executes **ONE task group at a time** with developer approval checkpoints, verifies the increment, and updates `[x]` items. |
 | `/verify-phase`<br>*(or "verify phase", "run validation")* | [`.junie/skills/verify-phase/SKILL.md`](.junie/skills/verify-phase/SKILL.md) | Runs automated tests, linter, and audits the git diff from 3 perspectives: Architecture, Security, UX. |
 | `/complete-phase`<br>*(or "complete phase", "merge phase")* | [`.junie/skills/complete-phase/SKILL.md`](.junie/skills/complete-phase/SKILL.md) | Updates `specs/roadmap.md` to `[x]`, updates `CHANGELOG.md` via git history, commits, merges into main, and prompts before deleting branch. |
 
