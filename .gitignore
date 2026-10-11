@@ -6,7 +6,11 @@
 .DS_Store
 jetbrains-plugin/build/
 jetbrains-plugin/.gradle/
-modules-imgs
+docs/modules-imgs
 docs/notes
 .skills/
 .junie/
+
+# UniBo university files
+unibo.v
+**/unibo.v

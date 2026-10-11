@@ -36,6 +36,6 @@ Questo comando compila il plugin e lo copia automaticamente nella cartella plugi
 
 ### 2. Test in WebStorm o CLion
 1. Riavvia WebStorm (o fai *File -> Invalidate Caches / Restart*).
-2. Apri `examples/test_circuit.v`.
+2. Apri `tests/examples/test_circuit.v` (oppure `tests/test.v`).
 3. In alto a destra dell'editor appariranno i tasti di split preview.
 4. Clicca sull'icona **Split**: vedrai il circuito del Flip-Flop D con clock oscillante, ingressi CLR, RESET, D e uscite Q, ~Q pronte per l'interazione!

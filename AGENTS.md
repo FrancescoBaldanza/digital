@@ -22,7 +22,7 @@ Every non-trivial modification is governed by markdown specifications versioned 
 
 ## 2. Agent Skills Catalog
 
-Your operating procedures are defined as reusable skills in `.junie/skills/` (and `.skills/`).
+Your operating procedures are defined as reusable skills in `.junie/skills/` (and `.skills`).
 When the user invokes a skill or issues a matching request, **you must read the corresponding `SKILL.md` file and follow its instructions to the letter**:
 
 | Command / Trigger | Target Skill | Responsibility |
@@ -44,4 +44,4 @@ When the user invokes a skill or issues a matching request, **you must read the 
   - `npm run prod`: Production build.
   - `npm run build-lib`: Transpilation of `src/` to `lib/` with Babel.
 - **Dependencies Policy:** Do NOT add new dependencies to `package.json` without explicit approval in `requirements.md` or user consent.
-- **Context Boundaries:** Heavy directories like `node_modules/`, `dist/`, `lib/`, and `modules-imgs/` are ignored via `.aiignore` to preserve clean context memory.
+- **Context Boundaries:** Heavy directories like `node_modules/`, `dist/`, `lib/`, and `docs/modules-imgs` are ignored via `.aiignore` to preserve clean context memory.

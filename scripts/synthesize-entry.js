@@ -42,7 +42,7 @@ try {
     const hasUniboInclude = vContent.includes('unibo.v') || vContent.includes('modules.v');
 
     // Resolve UniBo Verilog definitions
-    let uniboLib = path.resolve(__dirname, '../libraries/unibo/modules.v');
+    let uniboLib = path.resolve(__dirname, '../src/libraries/unibo/modules.v');
     const embeddedVerilog = (typeof __UNIBO_VERILOG_SOURCE__ !== 'undefined') ? __UNIBO_VERILOG_SOURCE__ : '';
 
     if (!fs.existsSync(uniboLib)) {

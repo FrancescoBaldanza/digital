@@ -18,5 +18,5 @@ jetbrains-plugin/.gradle/
 *.swp
 
 # Heavy asset folders
-modules-imgs/
+docs/modules-imgs/
 docs/notes

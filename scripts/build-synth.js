@@ -5,7 +5,7 @@ const fs = require('fs');
 const outDir = path.resolve(__dirname, '../jetbrains-plugin/src/main/resources/web');
 fs.mkdirSync(outDir, { recursive: true });
 
-const uniboVerilog = fs.readFileSync(path.resolve(__dirname, '../libraries/unibo/modules.v'), 'utf8');
+const uniboVerilog = fs.readFileSync(path.resolve(__dirname, '../src/libraries/unibo/modules.v'), 'utf8');
 
 const compiler = webpack({
   mode: 'production',

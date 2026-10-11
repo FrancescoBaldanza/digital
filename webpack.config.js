@@ -64,8 +64,8 @@ module.exports = {
 //        new BundleAnalyzerPlugin()
     ].concat(tests.map(t => new HtmlWebpackPlugin({
             title: t.title,
-            template: 'examples/template.html',
-            test: JSON.stringify(require('./examples/' + t.name + '.json')),
+            template: 'tests/examples/template.html',
+            test: JSON.stringify(require('./tests/examples/' + t.name + '.json')),
             filename: 'test/' + t.name + '.html',
             inject: 'head'
     })))
