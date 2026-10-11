@@ -1,0 +1,22 @@
+# JetBrains AI / Junie Context Ignore File
+# Prevents large artifacts and dependencies from polluting agent context
+
+# Dependencies & lockfiles
+node_modules/
+package-lock.json
+
+# Build artifacts & compiled code
+dist/
+lib/
+jetbrains-plugin/build/
+jetbrains-plugin/.gradle/
+
+# Version control & IDE files
+.git/
+.idea/
+.DS_Store
+*.swp
+
+# Heavy asset folders
+modules-imgs/
+docs/notes

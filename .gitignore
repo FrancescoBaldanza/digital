@@ -7,4 +7,6 @@
 jetbrains-plugin/build/
 jetbrains-plugin/.gradle/
 modules-imgs
-notes
+docs/notes
+.skills/
+.junie/
