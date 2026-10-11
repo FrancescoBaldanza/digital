@@ -63,7 +63,7 @@ module.exports = {
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: 'DigitalJS - Verilog Simulator',
-            template: 'jetbrains-plugin/src/main/resources/web/index.html',
+            template: 'src/web/index.html',
             filename: 'index.html',
             inject: false
         })
