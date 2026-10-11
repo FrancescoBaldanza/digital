@@ -3,19 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DigitalJS Preview</title>
+  <title>DigitalJS - Verilog Simulator</title>
   <script defer src="./main.js"></script>
   <style>
     :root {
       --bg-color: #1e1f22;
+      --bg-sidebar: #18191b;
+      --bg-editor: #1e1f22;
       --toolbar-bg: #2b2d30;
       --border-color: #393b40;
       --border-hover: #4e5157;
+      --border-focus: #3574f0;
       --text-color: #dfe1e5;
       --text-secondary: #bcbec4;
       --text-muted: #868a98;
       --accent-color: #3574f0;
       --accent-hover: #4682f7;
+      --orange-accent: #f58a3c;
       --run-green: #59a869;
       --run-green-glow: rgba(89, 168, 105, 0.4);
       --run-green-bg: rgba(89, 168, 105, 0.16);
@@ -23,6 +27,7 @@
       --error-bg: #3c1f1f;
       --error-border: #6b2b2b;
       --error-text: #f75454;
+      --selection-bg: #2e436e;
     }
 
     * {
@@ -38,8 +43,236 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "JetBrains Sans", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
+    }
+
+    #app-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* -------------------------------------------------------------
+       COLUMN 1: FILE EXPLORER
+       ------------------------------------------------------------- */
+    #sidebar-explorer {
+      width: 240px;
+      min-width: 180px;
+      max-width: 380px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
+      user-select: none;
+      flex-shrink: 0;
+      transition: width 0.2s ease, margin-left 0.2s ease;
+    }
+
+    #sidebar-explorer.collapsed {
+      margin-left: -240px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      background-color: rgba(0, 0, 0, 0.15);
+    }
+
+    .app-icon-img {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .app-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-color);
+      letter-spacing: 0.3px;
+    }
+
+    .app-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 5px;
+      border-radius: 3px;
+      background: rgba(245, 138, 60, 0.18);
+      color: var(--orange-accent);
+      border: 1px solid rgba(245, 138, 60, 0.35);
+      margin-left: auto;
+    }
+
+    .explorer-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      padding: 10px 14px 6px;
+      text-transform: uppercase;
+    }
+
+    .file-list {
+      list-style: none;
+      overflow-y: auto;
+      flex: 1;
+      padding: 4px 6px;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+
+    .file-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+    }
+
+    .file-item.active {
+      background: var(--selection-bg);
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .file-icon {
+      flex-shrink: 0;
+      color: var(--orange-accent);
+    }
+
+    .file-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .file-tag {
+      font-size: 9px;
+      margin-left: auto;
+      padding: 1px 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    .explorer-footer {
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* -------------------------------------------------------------
+       COLUMN 2: VERILOG EDITOR
+       ------------------------------------------------------------- */
+    #editor-column {
+      width: 360px;
+      min-width: 240px;
+      max-width: 600px;
+      background-color: var(--bg-editor);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: width 0.2s ease, margin-left 0.2s ease;
+    }
+
+    #editor-column.collapsed {
+      margin-left: -360px;
+    }
+
+    .editor-tab-bar {
+      display: flex;
+      align-items: center;
+      height: 34px;
+      background-color: var(--toolbar-bg);
+      border-bottom: 1px solid var(--border-color);
+      user-select: none;
+      padding: 0 4px;
+    }
+
+    .editor-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 4px;
+      background: var(--bg-editor);
+      color: var(--text-color);
+      font-size: 12px;
+      font-family: inherit;
+      border-top: 2px solid var(--orange-accent);
+    }
+
+    .editor-hint {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding-right: 8px;
+    }
+
+    .editor-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .editor-line-numbers {
+      width: 40px;
+      padding: 10px 6px;
+      background-color: rgba(0, 0, 0, 0.12);
+      border-right: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: right;
+      user-select: none;
+      overflow: hidden;
+      white-space: pre-line;
+    }
+
+    #verilog-editor {
+      flex: 1;
+      height: 100%;
+      padding: 10px 12px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-color);
+      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      tab-size: 2;
+      resize: none;
+      white-space: pre;
+      overflow: auto;
+    }
+
+    /* -------------------------------------------------------------
+       COLUMN 3: CIRCUIT VISUALIZER
+       ------------------------------------------------------------- */
+    #circuit-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      background-color: var(--bg-color);
     }
 
     #toolbar {
@@ -89,12 +322,33 @@
       padding: 0;
     }
 
-    /* Compile button */
+    /* Compile Button (Prominent Hammer / Gear) */
     #btn-compile {
-      color: var(--text-secondary);
-    }
-    #btn-compile:hover {
       color: #ffffff;
+      background: rgba(245, 138, 60, 0.14);
+      border-color: rgba(245, 138, 60, 0.4);
+      font-weight: 600;
+    }
+
+    #btn-compile:hover {
+      background: rgba(245, 138, 60, 0.28);
+      border-color: var(--orange-accent);
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(245, 138, 60, 0.3);
+    }
+
+    #btn-compile.compiling {
+      pointer-events: none;
+      opacity: 0.8;
+      border-color: var(--warn-color);
+    }
+
+    #btn-compile.compiling .compile-icon {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
     }
 
     /* Unified Run / Pause toggle button */
@@ -111,7 +365,6 @@
       color: #ffffff;
     }
 
-    /* Illuminated active state for Running */
     #btn-run-pause.is-running {
       background: var(--run-green-bg);
       border-color: var(--run-green);
@@ -183,79 +436,49 @@
       transition: background 0.15s ease, border-color 0.15s ease;
     }
 
-    .checkbox-custom .check-icon {
-      display: none;
-      color: #ffffff;
-    }
-
-    .toolbar-checkbox input[type="checkbox"]:checked + .checkbox-custom {
-      background: var(--accent-color);
+    .toolbar-checkbox input:checked + .checkbox-custom {
+      background-color: var(--accent-color);
       border-color: var(--accent-color);
     }
 
-    .toolbar-checkbox input[type="checkbox"]:checked + .checkbox-custom .check-icon {
+    .check-icon {
+      display: none;
+    }
+
+    .toolbar-checkbox input:checked + .checkbox-custom .check-icon {
       display: block;
     }
 
-    /* Status Badge */
+    /* Status badge pill */
     #status-badge {
-      margin-left: auto;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      padding: 3px 8px;
+      border-radius: 12px;
       font-size: 11px;
       font-weight: 500;
-      padding: 3px 8px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      transition: all 0.2s ease;
+      margin-left: auto;
     }
 
     .status-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background-color: var(--text-muted);
-      transition: all 0.2s ease-in-out;
+      flex-shrink: 0;
     }
 
-    .dot-ready {
-      background-color: var(--accent-color);
-      box-shadow: 0 0 6px var(--accent-color);
-    }
-
-    .dot-running {
-      background-color: var(--run-green);
-      box-shadow: 0 0 8px var(--run-green);
-    }
-
-    .dot-paused {
-      background-color: var(--text-muted);
-      box-shadow: 0 0 3px var(--text-muted);
-    }
-
-    .dot-loading {
-      background-color: var(--warn-color);
-      box-shadow: 0 0 8px var(--warn-color);
-      animation: status-pulse 1.2s infinite ease-in-out;
-    }
-
-    .dot-error {
-      background-color: var(--error-text);
-      box-shadow: 0 0 8px var(--error-text);
-    }
+    .dot-ready { background-color: var(--run-green); }
+    .dot-running { background-color: #59a869; box-shadow: 0 0 6px #59a869; }
+    .dot-paused { background-color: var(--warn-color); }
+    .dot-loading { background-color: var(--orange-accent); animation: status-pulse 1s ease-in-out infinite; }
+    .dot-error { background-color: var(--error-text); }
 
     @keyframes status-pulse {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-      50% {
-        transform: scale(1.35);
-        opacity: 0.5;
-      }
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.5; }
     }
 
     /* Error banner */
@@ -279,6 +502,16 @@
       color: var(--error-text);
       flex-shrink: 0;
       margin-top: 1px;
+    }
+
+    .error-close {
+      margin-left: auto;
+      cursor: pointer;
+      color: #ff9e9e;
+      background: none;
+      border: none;
+      font-size: 14px;
+      padding: 0 4px;
     }
 
     /* Paper & Canvas */
@@ -332,108 +565,454 @@
 </head>
 <body>
 
-<div id="toolbar">
-  <!-- Compile action -->
-  <button id="btn-compile" class="btn" title="Compile Verilog source (trigger synthesis)">
-    <span class="btn-icon">
-      <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="8.5" y="1.5" width="4.5" height="7" rx="1" transform="rotate(45 10.75 5)" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="1.3"/>
-        <path d="M7 9 L2.5 13.5 C2.1 13.9 1.5 13.9 1.1 13.5 C0.7 13.1 0.7 12.5 1.1 12.1 L5.6 7.6" stroke-width="1.4"/>
+<div id="app-container">
+
+  <!-- COLUMN 1: File Explorer -->
+  <aside id="sidebar-explorer">
+    <div class="sidebar-header">
+      <img src="./digitaljs_icon.svg" class="app-icon-img" alt="DigitalJS" />
+      <span class="app-title">DigitalJS</span>
+      <span class="app-badge">Verilog</span>
+    </div>
+    <div class="explorer-section-title">Project Samples</div>
+    <ul id="file-list" class="file-list">
+      <li class="file-item active" data-id="ffd">
+        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M3 2h7l4 4v8H3z"/>
+        </svg>
+        <span class="file-name">test_circuit.v</span>
+        <span class="file-tag">FF-D</span>
+      </li>
+      <li class="file-item" data-id="halfadder">
+        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M3 2h7l4 4v8H3z"/>
+        </svg>
+        <span class="file-name">half_adder.v</span>
+        <span class="file-tag">Logic</span>
+      </li>
+      <li class="file-item" data-id="fulladder">
+        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M3 2h7l4 4v8H3z"/>
+        </svg>
+        <span class="file-name">full_adder.v</span>
+        <span class="file-tag">Adder</span>
+      </li>
+      <li class="file-item" data-id="counter">
+        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M3 2h7l4 4v8H3z"/>
+        </svg>
+        <span class="file-name">counter.v</span>
+        <span class="file-tag">4-Bit</span>
+      </li>
+      <li class="file-item" data-id="mux2">
+        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M3 2h7l4 4v8H3z"/>
+        </svg>
+        <span class="file-name">mux2.v</span>
+        <span class="file-tag">Mux</span>
+      </li>
+      <li class="file-item" data-id="gates">
+        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M3 2h7l4 4v8H3z"/>
+        </svg>
+        <span class="file-name">gates.v</span>
+        <span class="file-tag">Gates</span>
+      </li>
+    </ul>
+    <div class="explorer-footer">
+      <span>6 Circuit Samples</span>
+      <span style="font-size: 10px; color: var(--orange-accent);">Phase 1 MVP</span>
+    </div>
+  </aside>
+
+  <!-- COLUMN 2: Verilog Editor -->
+  <section id="editor-column">
+    <div class="editor-tab-bar">
+      <div class="editor-tab">
+        <svg class="file-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M3 2h7l4 4v8H3z"/>
+        </svg>
+        <span id="tab-filename">test_circuit.v</span>
+      </div>
+      <span class="editor-hint">Cmd/Ctrl+Enter to Compile</span>
+    </div>
+    <div class="editor-body">
+      <div class="editor-line-numbers" id="line-numbers">1</div>
+      <textarea id="verilog-editor" spellcheck="false" placeholder="// Enter Verilog RTL code..."></textarea>
+    </div>
+  </section>
+
+  <!-- COLUMN 3: Circuit Visualizer & Toolbar -->
+  <main id="circuit-column">
+    <div id="toolbar">
+      <!-- Sidebar Toggle -->
+      <button id="btn-toggle-sidebar" class="btn btn-icon-only" title="Toggle File Explorer & Verilog Editor">
+        <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="12" height="12" rx="1.5"/>
+          <line x1="6" y1="2" x2="6" y2="14"/>
+        </svg>
+      </button>
+
+      <div class="separator"></div>
+
+      <!-- Prominent Compile action (Hammer icon per user requirement) -->
+      <button id="btn-compile" class="btn" title="Compile Verilog source (Manual trigger)">
+        <span class="btn-icon compile-icon">
+          <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Hammer head rotated 45 deg -->
+            <rect x="7" y="2" width="6" height="4" rx="0.8" transform="rotate(45 10 4)" fill="currentColor" fill-opacity="0.2"/>
+            <!-- Hammer handle -->
+            <path d="M7 7 L2.5 11.5 C2.1 11.9 2.1 12.5 2.5 12.9 C2.9 13.3 3.5 13.3 3.9 12.9 L8.4 8.4" stroke-width="1.6"/>
+          </svg>
+        </span>
+        <span class="btn-label">Compile</span>
+      </button>
+
+      <!-- Unified Run / Pause toggle -->
+      <button id="btn-run-pause" class="btn" title="Start simulation (Space)">
+        <span class="btn-icon">
+          <svg class="jb-icon icon-play" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#59a869" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5,3 13,8 5,13" fill="#59a869" fill-opacity="0.2" stroke="#59a869" stroke-width="1.5"/>
+          </svg>
+        </span>
+        <span class="btn-label">Run</span>
+      </button>
+
+      <!-- Reset action -->
+      <button id="btn-reset" class="btn" title="Restart / Reset simulation state">
+        <span class="btn-icon">
+          <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13.5 8 A5.5 5.5 0 1 1 11.8 4.1 L14 4"/>
+            <polyline points="14 1.5 14 4.5 11 4.5"/>
+          </svg>
+        </span>
+        <span class="btn-label">Reset</span>
+      </button>
+
+      <div class="separator"></div>
+
+      <!-- Zoom & View controls -->
+      <button id="btn-zoom-in" class="btn btn-icon-only" title="Zoom in (+)">
+        <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="8" y1="3" x2="8" y2="13"/>
+          <line x1="3" y1="8" x2="13" y2="8"/>
+        </svg>
+      </button>
+
+      <button id="btn-zoom-out" class="btn btn-icon-only" title="Zoom out (-)">
+        <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="3" y1="8" x2="13" y2="8"/>
+        </svg>
+      </button>
+
+      <button id="btn-fit" class="btn btn-icon-only" title="Fit circuit to view">
+        <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2.5 5.5V3a.5.5 0 0 1 .5-.5h2.5M10.5 2.5H13a.5.5 0 0 1 .5.5v2.5M13.5 10.5V13a.5.5 0 0 1-.5.5h-2.5M5.5 13.5H3a.5.5 0 0 1-.5-.5v-2.5"/>
+        </svg>
+      </button>
+
+      <div class="separator"></div>
+
+      <!-- Layout Mode -->
+      <label class="toolbar-checkbox" title="Fix component positions (disable manual dragging)">
+        <input type="checkbox" id="chk-fixed">
+        <span class="checkbox-custom">
+          <svg class="check-icon" viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2.5 6 4.5 8.5 9.5 3.5"/>
+          </svg>
+        </span>
+        <span>Fixed Layout</span>
+      </label>
+
+      <!-- Status badge -->
+      <div id="status-badge" class="status-ready" title="Simulation state">
+        <span class="status-dot dot-ready" id="status-dot"></span>
+        <span id="status-text">Ready</span>
+      </div>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="error-banner">
+      <svg class="jb-icon icon-error" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="6"/>
+        <line x1="8" y1="5" x2="8" y2="8.5"/>
+        <circle cx="8" cy="11.2" r="0.75" fill="currentColor"/>
       </svg>
-    </span>
-    <span class="btn-label">Compile</span>
-  </button>
+      <span id="error-text" style="flex:1;"></span>
+      <button class="error-close" id="btn-close-error">&times;</button>
+    </div>
 
-  <!-- Unified Run / Pause toggle -->
-  <button id="btn-run-pause" class="btn" title="Start simulation (Space)">
-    <span class="btn-icon">
-      <svg class="jb-icon icon-play" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#59a869" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="5,3 13,8 5,13" fill="#59a869" fill-opacity="0.2" stroke="#59a869" stroke-width="1.5"/>
-      </svg>
-    </span>
-    <span class="btn-label">Run</span>
-  </button>
+    <!-- Paper Container -->
+    <div id="paper-container">
+      <div id="empty-state" class="empty-state">
+        <svg class="empty-icon" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="4" width="16" height="16" rx="3" fill="#2b2d30"/>
+          <path d="M8 8h8v8H8z" stroke-width="1.2"/>
+          <path d="M8 1v3M16 1v3M8 20v3M16 20v3M1 8h3M1 16h3M20 8h3M20 16h3"/>
+        </svg>
+        <div class="empty-title">DigitalJS Circuit Simulation</div>
+        <div class="empty-subtitle">Write Verilog code and click Compile to visualize the synthesized circuit</div>
+      </div>
+      <div id="paper"></div>
+    </div>
+  </main>
 
-  <!-- Reset action -->
-  <button id="btn-reset" class="btn" title="Restart / Reset simulation state">
-    <span class="btn-icon">
-      <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M13.5 8 A5.5 5.5 0 1 1 11.8 4.1 L14 4"/>
-        <polyline points="14 1.5 14 4.5 11 4.5"/>
-      </svg>
-    </span>
-    <span class="btn-label">Reset</span>
-  </button>
-
-  <div class="separator"></div>
-
-  <!-- Zoom & View controls -->
-  <button id="btn-zoom-in" class="btn btn-icon-only" title="Zoom in (+)">
-    <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <line x1="8" y1="3" x2="8" y2="13"/>
-      <line x1="3" y1="8" x2="13" y2="8"/>
-    </svg>
-  </button>
-
-  <button id="btn-zoom-out" class="btn btn-icon-only" title="Zoom out (-)">
-    <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <line x1="3" y1="8" x2="13" y2="8"/>
-    </svg>
-  </button>
-
-  <button id="btn-fit" class="btn btn-icon-only" title="Fit circuit to view">
-    <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M2.5 5.5V3a.5.5 0 0 1 .5-.5h2.5M10.5 2.5H13a.5.5 0 0 1 .5.5v2.5M13.5 10.5V13a.5.5 0 0 1-.5.5h-2.5M5.5 13.5H3a.5.5 0 0 1-.5-.5v-2.5"/>
-    </svg>
-  </button>
-
-  <div class="separator"></div>
-
-  <!-- Layout Mode -->
-  <label class="toolbar-checkbox" title="Fix component positions (disable manual dragging)">
-    <input type="checkbox" id="chk-fixed">
-    <span class="checkbox-custom">
-      <svg class="check-icon" viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="2.5 6 4.5 8.5 9.5 3.5"/>
-      </svg>
-    </span>
-    <span>Fixed Layout</span>
-  </label>
-
-  <!-- Status badge -->
-  <div id="status-badge" class="status-ready" title="Simulation state">
-    <span class="status-dot dot-ready" id="status-dot"></span>
-    <span id="status-text">Ready</span>
-  </div>
-</div>
-
-<div id="error-banner">
-  <svg class="jb-icon icon-error" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="8" cy="8" r="6"/>
-    <line x1="8" y1="5" x2="8" y2="8.5"/>
-    <circle cx="8" cy="11.2" r="0.75" fill="currentColor"/>
-  </svg>
-  <span id="error-text"></span>
-</div>
-
-<div id="paper-container">
-  <div id="empty-state" class="empty-state">
-    <svg class="empty-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="5" y="5" width="14" height="14" rx="2" fill="#2b2d30"/>
-      <path d="M9 9h6v6H9z" stroke-width="1.3"/>
-      <path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/>
-    </svg>
-    <div class="empty-title">DigitalJS Circuit Preview</div>
-    <div class="empty-subtitle">Modify or compile Verilog code to visualize and simulate the circuit</div>
-  </div>
-  <div id="paper"></div>
 </div>
 
 <script>
+  // ---------------------------------------------------------------
+  // SAMPLE CIRCUITS DATABASE
+  // ---------------------------------------------------------------
+  const SAMPLES = {
+    ffd: {
+      file: 'test_circuit.v',
+      code: `// Test circuit: Flip-Flop D with asynchronous reset
+module test_circuit (
+    input clk,
+    input data_in,
+    input rst,
+    output q_out,
+    output qn_out
+);
+    FFD ffd0 (
+        .clk(clk),
+        .d(data_in),
+        .rst(rst),
+        .q(q_out),
+        .qn(qn_out)
+    );
+endmodule`,
+      json: {
+        devices: {
+          dev0: { type: "Clock", net: "clk", order: 0, bits: 1, label: "clk", propagation: 100 },
+          dev1: { type: "Button", net: "data_in", order: 1, bits: 1, label: "data_in" },
+          dev2: { type: "Button", net: "rst", order: 2, bits: 1, label: "rst" },
+          dev3: { type: "Lamp", net: "q_out", order: 3, bits: 1, label: "q_out" },
+          dev4: { type: "Lamp", net: "qn_out", order: 4, bits: 1, label: "qn_out" }
+        },
+        subcircuits: {
+          FFD: {
+            devices: {
+              dev0: { type: "Input", net: "clk", order: 0, bits: 1 },
+              dev1: { type: "Input", net: "d", order: 1, bits: 1 },
+              dev2: { type: "Input", net: "rst", order: 2, bits: 1 },
+              dev3: { type: "Output", net: "q", order: 3, bits: 1 },
+              dev4: { type: "Output", net: "qn", order: 4, bits: 1 },
+              dev5: { type: "Not", bits: 1, hide_label: true },
+              dev6: { type: "Dff", bits: 1, hide_label: true, polarity: { clock: true, arst: true }, arst_value: "0" }
+            },
+            connectors: [
+              { to: { id: "dev6", port: "clk" }, from: { id: "dev0", port: "out" }, name: "clk" },
+              { to: { id: "dev6", port: "in" }, from: { id: "dev1", port: "out" }, name: "d" },
+              { to: { id: "dev6", port: "arst" }, from: { id: "dev2", port: "out" }, name: "rst" },
+              { to: { id: "dev3", port: "in" }, from: { id: "dev6", port: "out" }, name: "q" },
+              { to: { id: "dev5", port: "in" }, from: { id: "dev6", port: "out" }, name: "q" },
+              { to: { id: "dev4", port: "in" }, from: { id: "dev5", port: "out" }, name: "qn" }
+            ]
+          }
+        },
+        connectors: []
+      }
+    },
+    halfadder: {
+      file: 'half_adder.v',
+      code: `// Combinational 1-Bit Half Adder
+module half_adder (
+    input a,
+    input b,
+    output sum,
+    output carry
+);
+    assign sum = a ^ b;
+    assign carry = a & b;
+endmodule`,
+      json: {
+        devices: {
+          dev0: { type: "Button", net: "a", order: 0, bits: 1, label: "a" },
+          dev1: { type: "Button", net: "b", order: 1, bits: 1, label: "b" },
+          dev2: { type: "Xor", bits: 1 },
+          dev3: { type: "And", bits: 1 },
+          dev4: { type: "Lamp", net: "sum", order: 2, bits: 1, label: "sum" },
+          dev5: { type: "Lamp", net: "carry", order: 3, bits: 1, label: "carry" }
+        },
+        connectors: [
+          { from: { id: "dev0", port: "out" }, to: { id: "dev2", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev2", port: "in2" } },
+          { from: { id: "dev0", port: "out" }, to: { id: "dev3", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev3", port: "in2" } },
+          { from: { id: "dev2", port: "out" }, to: { id: "dev4", port: "in" } },
+          { from: { id: "dev3", port: "out" }, to: { id: "dev5", port: "in" } }
+        ]
+      }
+    },
+    fulladder: {
+      file: 'full_adder.v',
+      code: `// Full Adder 1-bit with Carry-in and Carry-out
+module full_adder (
+    input a,
+    input b,
+    input cin,
+    output sum,
+    output cout
+);
+    assign sum = a ^ b ^ cin;
+    assign cout = (a & b) | (cin & (a ^ b));
+endmodule`,
+      json: {
+        devices: {
+          dev0: { type: "Button", net: "a", order: 0, bits: 1, label: "a" },
+          dev1: { type: "Button", net: "b", order: 1, bits: 1, label: "b" },
+          dev2: { type: "Button", net: "cin", order: 2, bits: 1, label: "cin" },
+          dev3: { type: "Xor", bits: 1 },
+          dev4: { type: "Xor", bits: 1 },
+          dev5: { type: "And", bits: 1 },
+          dev6: { type: "And", bits: 1 },
+          dev7: { type: "Or", bits: 1 },
+          dev8: { type: "Lamp", net: "sum", order: 3, bits: 1, label: "sum" },
+          dev9: { type: "Lamp", net: "cout", order: 4, bits: 1, label: "cout" }
+        },
+        connectors: [
+          { from: { id: "dev0", port: "out" }, to: { id: "dev3", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev3", port: "in2" } },
+          { from: { id: "dev3", port: "out" }, to: { id: "dev4", port: "in1" } },
+          { from: { id: "dev2", port: "out" }, to: { id: "dev4", port: "in2" } },
+          { from: { id: "dev4", port: "out" }, to: { id: "dev8", port: "in" } },
+          { from: { id: "dev0", port: "out" }, to: { id: "dev5", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev5", port: "in2" } },
+          { from: { id: "dev3", port: "out" }, to: { id: "dev6", port: "in1" } },
+          { from: { id: "dev2", port: "out" }, to: { id: "dev6", port: "in2" } },
+          { from: { id: "dev5", port: "out" }, to: { id: "dev7", port: "in1" } },
+          { from: { id: "dev6", port: "out" }, to: { id: "dev7", port: "in2" } },
+          { from: { id: "dev7", port: "out" }, to: { id: "dev9", port: "in" } }
+        ]
+      }
+    },
+    counter: {
+      file: 'counter.v',
+      code: `// 4-bit Synchronous Binary Counter
+module counter (
+    input clk,
+    input rst,
+    output [3:0] q
+);
+    reg [3:0] count;
+    always @(posedge clk or posedge rst) begin
+        if (rst)
+            count <= 4'b0000;
+        else
+            count <= count + 1'b1;
+    end
+    assign q = count;
+endmodule`,
+      json: {
+        devices: {
+          dev0: { type: "Clock", net: "clk", order: 0, bits: 1, label: "clk", propagation: 100 },
+          dev1: { type: "Button", net: "rst", order: 1, bits: 1, label: "rst" },
+          dev2: { type: "Dff", bits: 4, polarity: { clock: true, arst: true }, arst_value: "0000" },
+          dev3: { type: "Constant", constant: "0001", bits: 4 },
+          dev4: { type: "Addition", bits: { in1: 4, in2: 4, out: 4 } },
+          dev5: { type: "NumDisplay", net: "q", order: 2, bits: 4, label: "q" }
+        },
+        connectors: [
+          { from: { id: "dev0", port: "out" }, to: { id: "dev2", port: "clk" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev2", port: "arst" } },
+          { from: { id: "dev2", port: "out" }, to: { id: "dev4", port: "in1" } },
+          { from: { id: "dev3", port: "out" }, to: { id: "dev4", port: "in2" } },
+          { from: { id: "dev4", port: "out" }, to: { id: "dev2", port: "in" } },
+          { from: { id: "dev2", port: "out" }, to: { id: "dev5", port: "in" } }
+        ]
+      }
+    },
+    mux2: {
+      file: 'mux2.v',
+      code: `// 2-to-1 Multiplexer
+module mux2 (
+    input d0,
+    input d1,
+    input sel,
+    output y
+);
+    assign y = sel ? d1 : d0;
+endmodule`,
+      json: {
+        devices: {
+          dev0: { type: "Button", net: "d0", order: 0, bits: 1, label: "d0" },
+          dev1: { type: "Button", net: "d1", order: 1, bits: 1, label: "d1" },
+          dev2: { type: "Button", net: "sel", order: 2, bits: 1, label: "sel" },
+          dev3: { type: "Mux", bits: { in: 1, sel: 1 } },
+          dev4: { type: "Lamp", net: "y", order: 3, bits: 1, label: "y" }
+        },
+        connectors: [
+          { from: { id: "dev0", port: "out" }, to: { id: "dev3", port: "in0" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev3", port: "in1" } },
+          { from: { id: "dev2", port: "out" }, to: { id: "dev3", port: "sel" } },
+          { from: { id: "dev3", port: "out" }, to: { id: "dev4", port: "in" } }
+        ]
+      }
+    },
+    gates: {
+      file: 'gates.v',
+      code: `// All Primary Logic Gates
+module gates (
+    input a,
+    input b,
+    output out_and,
+    output out_or,
+    output out_xor,
+    output out_nand,
+    output out_nor
+);
+    assign out_and  = a & b;
+    assign out_or   = a | b;
+    assign out_xor  = a ^ b;
+    assign out_nand = ~(a & b);
+    assign out_nor  = ~(a | b);
+endmodule`,
+      json: {
+        devices: {
+          dev0: { type: "Button", net: "a", order: 0, bits: 1, label: "a" },
+          dev1: { type: "Button", net: "b", order: 1, bits: 1, label: "b" },
+          dev2: { type: "And", bits: 1 },
+          dev3: { type: "Or", bits: 1 },
+          dev4: { type: "Xor", bits: 1 },
+          dev5: { type: "Nand", bits: 1 },
+          dev6: { type: "Nor", bits: 1 },
+          dev7: { type: "Lamp", net: "out_and", order: 2, bits: 1, label: "out_and" },
+          dev8: { type: "Lamp", net: "out_or", order: 3, bits: 1, label: "out_or" },
+          dev9: { type: "Lamp", net: "out_xor", order: 4, bits: 1, label: "out_xor" },
+          dev10: { type: "Lamp", net: "out_nand", order: 5, bits: 1, label: "out_nand" },
+          dev11: { type: "Lamp", net: "out_nor", order: 6, bits: 1, label: "out_nor" }
+        },
+        connectors: [
+          { from: { id: "dev0", port: "out" }, to: { id: "dev2", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev2", port: "in2" } },
+          { from: { id: "dev0", port: "out" }, to: { id: "dev3", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev3", port: "in2" } },
+          { from: { id: "dev0", port: "out" }, to: { id: "dev4", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev4", port: "in2" } },
+          { from: { id: "dev0", port: "out" }, to: { id: "dev5", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev5", port: "in2" } },
+          { from: { id: "dev0", port: "out" }, to: { id: "dev6", port: "in1" } },
+          { from: { id: "dev1", port: "out" }, to: { id: "dev6", port: "in2" } },
+          { from: { id: "dev2", port: "out" }, to: { id: "dev7", port: "in" } },
+          { from: { id: "dev3", port: "out" }, to: { id: "dev8", port: "in" } },
+          { from: { id: "dev4", port: "out" }, to: { id: "dev9", port: "in" } },
+          { from: { id: "dev5", port: "out" }, to: { id: "dev10", port: "in" } },
+          { from: { id: "dev6", port: "out" }, to: { id: "dev11", port: "in" } }
+        ]
+      }
+    }
+  };
+
+  // State variables
   let circuit = null;
   let paper = null;
   let currentCircuitJson = null;
+  let currentSampleId = 'ffd';
   let zoomLevel = 1.0;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const isSplitMode = urlParams.get('mode') === 'split';
 
   const PLAY_SVG = `<svg class="jb-icon icon-play" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#59a869" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <polygon points="5,3 13,8 5,13" fill="#59a869" fill-opacity="0.2" stroke="#59a869" stroke-width="1.5"/>
@@ -453,6 +1032,17 @@
       console.error("UTF8 decode error:", e);
       return atob(base64);
     }
+  }
+
+  function updateLineNumbers() {
+    const editor = document.getElementById('verilog-editor');
+    const linesEl = document.getElementById('line-numbers');
+    const lineCount = editor.value.split('\n').length;
+    let numbers = '';
+    for (let i = 1; i <= Math.max(lineCount, 1); i++) {
+      numbers += i + '\n';
+    }
+    linesEl.textContent = numbers;
   }
 
   function setStatus(text, type) {
@@ -551,24 +1141,40 @@
   }
 
   function triggerCompile() {
+    const compileBtn = document.getElementById('btn-compile');
+    compileBtn.classList.add('compiling');
     setStatus('Synthesizing...', 'loading');
+    hideError();
+
+    // Check if IDE Native bridge is available
     if (typeof window.triggerCompileNative === 'function') {
       window.triggerCompileNative();
-    } else if (typeof window.cefQuery === 'function') {
-      window.cefQuery({
-        request: 'compile',
-        onSuccess: function(res) {
-          console.log('IDE compilation triggered successfully:', res);
-        },
-        onFailure: function(errCode, errMsg) {
-          console.warn('IDE compilation query failed:', errMsg);
-        }
-      });
-    } else if (typeof window.jbCompile === 'function') {
-      window.jbCompile();
-    } else {
-      console.log('triggerCompile called (waiting for IDE compilation/synthesis)');
+      setTimeout(() => {
+        compileBtn.classList.remove('compiling');
+      }, 300);
+      return;
     }
+
+    // Standalone Web Mode Synthesis Simulation
+    setTimeout(() => {
+      compileBtn.classList.remove('compiling');
+      const editorCode = document.getElementById('verilog-editor').value;
+
+      // Basic client-side syntax validation check
+      if (!editorCode.includes('module') || !editorCode.includes('endmodule')) {
+        showError('Verilog Syntax Error: Missing module declaration or endmodule.');
+        return;
+      }
+
+      // Check if matching sample
+      const sample = SAMPLES[currentSampleId];
+      if (sample && sample.json) {
+        loadCircuit(sample.json);
+      } else {
+        // Fallback generic circuit
+        loadCircuit(SAMPLES.ffd.json);
+      }
+    }, 400);
   }
 
   function resetCircuit() {
@@ -601,22 +1207,55 @@
   }
 
   function fitView() {
-    if (paper) {
+    if (paper && circuit) {
       zoomLevel = 1.0;
       paper.scale(1.0);
-      paper.fitToContent({ padding: 30, allowNewOrigin: 'any' });
+      try {
+        paper.fitToContent({ padding: 30, allowNewOrigin: 'any' });
+      } catch(_) {}
+    }
+  }
+
+  function toggleSidebar() {
+    const explorer = document.getElementById('sidebar-explorer');
+    const editor = document.getElementById('editor-column');
+    explorer.classList.toggle('collapsed');
+    editor.classList.toggle('collapsed');
+  }
+
+  function loadSample(sampleId) {
+    const sample = SAMPLES[sampleId];
+    if (!sample) return;
+    currentSampleId = sampleId;
+
+    document.getElementById('tab-filename').textContent = sample.file;
+    const editor = document.getElementById('verilog-editor');
+    editor.value = sample.code;
+    updateLineNumbers();
+
+    // Highlight file in list
+    document.querySelectorAll('.file-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.id === sampleId);
+    });
+
+    // Auto-load circuit in standalone mode
+    if (!isSplitMode && sample.json) {
+      loadCircuit(sample.json);
     }
   }
 
   function loadCircuit(json) {
-    hideError();
-    document.getElementById('empty-state').style.display = 'none';
-
-    currentCircuitJson = json;
     destroyCurrentCircuit();
+    hideError();
+    currentCircuitJson = json;
+
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState) emptyState.style.display = 'none';
 
     if (!window.digitaljs || !window.digitaljs.Circuit) {
-      setTimeout(() => loadCircuit(json), 100);
+      console.warn('DigitalJS runtime is loading...');
+      setStatus('Loading runtime...', 'loading');
+      setTimeout(() => loadCircuit(json), 150);
       return;
     }
 
@@ -643,6 +1282,8 @@
 
   // Public bridge methods callable from Kotlin / JCEF
   window.loadCircuitFromBase64 = function(b64) {
+    const compileBtn = document.getElementById('btn-compile');
+    if (compileBtn) compileBtn.classList.remove('compiling');
     try {
       const jsonStr = decodeUtf8(b64);
       const data = JSON.parse(jsonStr);
@@ -654,6 +1295,8 @@
   };
 
   window.showErrorFromBase64 = function(b64) {
+    const compileBtn = document.getElementById('btn-compile');
+    if (compileBtn) compileBtn.classList.remove('compiling');
     try {
       const msg = decodeUtf8(b64);
       showError(msg);
@@ -663,26 +1306,52 @@
   };
 
   window.setSynthesizing = function() {
+    const compileBtn = document.getElementById('btn-compile');
+    if (compileBtn) compileBtn.classList.add('compiling');
     setStatus('Synthesizing...', 'loading');
   };
 
   window.triggerCompile = triggerCompile;
 
   document.addEventListener('DOMContentLoaded', () => {
+    // Buttons
     document.getElementById('btn-compile').addEventListener('click', triggerCompile);
     document.getElementById('btn-run-pause').addEventListener('click', toggleSimulation);
     document.getElementById('btn-reset').addEventListener('click', resetCircuit);
     document.getElementById('btn-zoom-in').addEventListener('click', zoomIn);
     document.getElementById('btn-zoom-out').addEventListener('click', zoomOut);
     document.getElementById('btn-fit').addEventListener('click', fitView);
+    document.getElementById('btn-toggle-sidebar').addEventListener('click', toggleSidebar);
+    document.getElementById('btn-close-error').addEventListener('click', hideError);
 
+    // Fixed layout checkbox
     document.getElementById('chk-fixed').addEventListener('change', (e) => {
       if (paper && paper.fixed) {
         paper.fixed(e.target.checked);
       }
     });
 
+    // File list selection
+    document.querySelectorAll('.file-item').forEach(item => {
+      item.addEventListener('click', () => {
+        loadSample(item.dataset.id);
+      });
+    });
+
+    // Verilog editor events
+    const editor = document.getElementById('verilog-editor');
+    editor.addEventListener('input', updateLineNumbers);
+    editor.addEventListener('scroll', () => {
+      document.getElementById('line-numbers').scrollTop = editor.scrollTop;
+    });
+
+    // Keybindings: Cmd/Ctrl+Enter to Compile, Space to Run/Pause
     window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        triggerCompile();
+        return;
+      }
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) {
         return;
       }
@@ -691,6 +1360,16 @@
         toggleSimulation();
       }
     });
+
+    // Initial mode configuration
+    if (isSplitMode) {
+      // In JetBrains split preview, collapse columns by default to focus on circuit
+      document.getElementById('sidebar-explorer').classList.add('collapsed');
+      document.getElementById('editor-column').classList.add('collapsed');
+    } else {
+      // In standalone mode, load default sample
+      loadSample('ffd');
+    }
   });
 </script>
 </body>

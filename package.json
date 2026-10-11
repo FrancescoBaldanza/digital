@@ -19,8 +19,8 @@
   },
   "scripts": {
     "prepare": "npm run prod && npm run build-lib",
-    "dev": "webpack --mode development",
-    "prod": "webpack --mode production",
+    "dev": "webpack --mode development && cp -f docs/resources/digitaljs_icon.svg dist/digitaljs_icon.svg",
+    "prod": "webpack --mode production && cp -f docs/resources/digitaljs_icon.svg dist/digitaljs_icon.svg",
     "watch": "webpack --mode development --watch",
     "test": "jest",
     "build-lib": "mkdir -p lib && babel src -d lib && mkdir -p lib/libraries/unibo && cp -f src/libraries/unibo/modules.v lib/libraries/unibo/modules.v",

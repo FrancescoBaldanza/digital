@@ -61,7 +61,12 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(),
-//        new BundleAnalyzerPlugin()
+        new HtmlWebpackPlugin({
+            title: 'DigitalJS - Verilog Simulator',
+            template: 'jetbrains-plugin/src/main/resources/web/index.html',
+            filename: 'index.html',
+            inject: false
+        })
     ].concat(tests.map(t => new HtmlWebpackPlugin({
             title: t.title,
             template: 'tests/examples/template.html',

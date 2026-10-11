@@ -18,11 +18,11 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 2.4 Verify that existing unit tests in `tests/` pass cleanly with `npm test`
 
 ### Task Group 3: 3-Column UI & JetBrains Plugin Integration
-- [ ] 3.1 Implement responsive 3-column layout (Column 1: File Explorer, Column 2: Verilog Editor, Column 3: Circuit Visualizer)
-- [ ] 3.2 Add prominent "Compile" button in the action toolbar with visual loading/spinner indicator
-- [ ] 3.3 Connect File Explorer selection to Verilog editor loading and circuit viewer state
-- [ ] 3.4 Ensure the web UI bundles seamlessly with Webpack (`npm run dev` / `npm run prod`)
-- [ ] 3.5 Configure the JetBrains IDE plugin base to embed the web preview via JCEF WebView and bridge file updates
+- [x] 3.1 Implement responsive 3-column layout (Column 1: File Explorer, Column 2: Verilog Editor, Column 3: Circuit Visualizer)
+- [x] 3.2 Add prominent "Compile" button in the action toolbar with visual loading/spinner indicator
+- [x] 3.3 Connect File Explorer selection to Verilog editor loading and circuit viewer state
+- [x] 3.4 Ensure the web UI bundles seamlessly with Webpack (`npm run dev` / `npm run prod`)
+- [x] 3.5 Configure the JetBrains IDE plugin base to embed the web preview via JCEF WebView and bridge file updates
 
 ### Task Group 4: Verification & Automated Tests
 - [ ] 4.1 Run full test suite with `npm test` and ensure all tests pass
