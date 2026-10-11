@@ -16,11 +16,11 @@ Run the following automated commands in the project root:
 | **Plugin Build** | `cd jetbrains-plugin && ./gradlew buildPlugin` | Gradle build completes successfully |
 
 ### Specific Test Assertions
-- [ ] Test assertion 1: Verify `npm test` executes all unit tests for cells, tools, engines, transforms, and modular architecture with zero errors.
-- [ ] Test assertion 2: Verify `yosys2digitaljs` converts valid Verilog code into valid DigitalJS circuit JSON structure.
-- [ ] Test assertion 3: Verify invalid Verilog code produces descriptive compile errors without crashing the application.
-- [ ] Test assertion 4: Verify `specs/` directory is tracked by git and `unibo.v` is ignored by git.
-- [ ] Test assertion 5: Verify no duplicated files remain between `libraries/` and `src/libraries/`.
+- [x] Test assertion 1: Verify `npm test` executes all unit tests for cells, tools, engines, transforms, and modular architecture with zero errors.
+- [x] Test assertion 2: Verify `yosys2digitaljs` converts valid Verilog code into valid Digital circuit JSON structure.
+- [x] Test assertion 3: Verify invalid Verilog code produces descriptive compile errors without crashing the application.
+- [x] Test assertion 4: Verify `specs/` directory is tracked by git and `unibo.v` is ignored by git.
+- [x] Test assertion 5: Verify no duplicated files remain between `libraries/` and `src/libraries/`.
 
 ---
 
@@ -52,9 +52,9 @@ Step-by-step instructions for human or agent verification:
 
 ## 3. Definition of Done
 The phase is considered complete when:
-- [ ] All task groups in `plan.md` are checked `[x]`
-- [ ] All automated tests pass (`npm test`)
-- [ ] Production build succeeds (`npm run prod`)
+- [x] All task groups in `plan.md` are checked `[x]`
+- [x] All automated tests pass (`npm test`)
+- [x] Production build succeeds (`npm run prod`)
 - [ ] Manual walkthrough acceptance criteria are fulfilled
 - [ ] Working directory is clean with all phase changes committed on `phase-1-foundation`
-- [ ] Multi-agent verification review passes without blocking concerns (`/verify-phase`)
+- [x] Multi-agent verification review passes without blocking concerns (`/verify-phase`)
