@@ -5,10 +5,10 @@ Detailed sequence of independently executable and verifiable task groups.
 ---
 
 ### Task Group 1: OOP Module API & Shape Hierarchy
-- [ ] 1.1 Consolidare e formalizzare le classi `Module`, `Input`, `Output`, `Shape` in `src/module-api/` con supporto per bus n-bit e orientamento porte
-- [ ] 1.2 Implementare la validazione delle definizioni dei moduli (nomi duplicati, porte disconnesse, shape non valida)
-- [ ] 1.3 Esportare l'API OOP in modo pulito tramite `src/module-api/index.mjs` con supporto TypeScript typedef / JSDoc completo
-- [ ] 1.4 Scrivere unit test per le classi `Module`, `Input`, `Output` e `Shape`
+- [x] 1.1 Consolidare e formalizzare le classi `Module`, `Input`, `Output`, `Shape` in `src/module-api/` con supporto per bus n-bit e orientamento porte
+- [x] 1.2 Implementare la validazione delle definizioni dei moduli (nomi duplicati, porte disconnesse, shape non valida)
+- [x] 1.3 Esportare l'API OOP in modo pulito tramite `src/module-api/index.mjs` con supporto TypeScript typedef / JSDoc completo
+- [x] 1.4 Scrivere unit test per le classi `Module`, `Input`, `Output` e `Shape`
 
 ### Task Group 2: Library Registry & Directory Resolver
 - [ ] 2.1 Rafforzare `LibraryRegistry` in `src/libraries/registry.mjs` per gestire sia librerie built-in (`src/libraries/`) che esterne
