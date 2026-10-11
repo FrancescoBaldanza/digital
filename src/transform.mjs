@@ -119,7 +119,13 @@ const gate_mergable = new Map([
     ["Xor", "Xor"],
     ["Nand", "And"],
     ["Nor", "Or"],
-    ["Xnor", "Xor"]
+    ["Xnor", "Xor"],
+    ["$and", "$and"],
+    ["$or", "$or"],
+    ["$xor", "$xor"],
+    ["$nand", "$and"],
+    ["$nor", "$or"],
+    ["$xnor", "$xor"]
 ]);
 
 export function makeNAryGates(model, dev, id)
@@ -315,6 +321,7 @@ export function makeDffWithEnable(model, dev, id)
 }
 
 export const transformations = [removeRepeater, integrateNegation, integrateArithConstant, makeNAryGates, makeBinaryMuxes, makeDffWithEnable];
+export const mergeAssociativeGates = makeNAryGates;
 
 export class CircuitModel {
     constructor(data) {

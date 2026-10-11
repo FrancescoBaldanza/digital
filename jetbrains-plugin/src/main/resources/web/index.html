@@ -8,8 +8,6 @@
   <style>
     :root {
       --bg-color: #1e1f22;
-      --bg-sidebar: #18191b;
-      --bg-editor: #1e1f22;
       --toolbar-bg: #2b2d30;
       --border-color: #393b40;
       --border-hover: #4e5157;
@@ -52,222 +50,11 @@
       overflow: hidden;
     }
 
-    /* -------------------------------------------------------------
-       COLUMN 1: FILE EXPLORER
-       ------------------------------------------------------------- */
-    #sidebar-explorer {
-      width: 240px;
-      min-width: 180px;
-      max-width: 380px;
-      background-color: var(--bg-sidebar);
-      border-right: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      user-select: none;
-      flex-shrink: 0;
-      transition: width 0.2s ease, margin-left 0.2s ease;
-    }
-
-    #sidebar-explorer.collapsed {
-      margin-left: -240px;
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border-color);
-      background-color: rgba(0, 0, 0, 0.15);
-    }
-
-    .app-icon-img {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-
-    .app-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-color);
-      letter-spacing: 0.3px;
-    }
-
-    .app-badge {
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 5px;
-      border-radius: 3px;
-      background: rgba(245, 138, 60, 0.18);
-      color: var(--orange-accent);
-      border: 1px solid rgba(245, 138, 60, 0.35);
-      margin-left: auto;
-    }
-
-    .explorer-section-title {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      color: var(--text-muted);
-      padding: 10px 14px 6px;
-      text-transform: uppercase;
-    }
-
-    .file-list {
-      list-style: none;
-      overflow-y: auto;
-      flex: 1;
-      padding: 4px 6px;
-    }
-
-    .file-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 12px;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: background 0.12s ease, color 0.12s ease;
-    }
-
-    .file-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-color);
-    }
-
-    .file-item.active {
-      background: var(--selection-bg);
-      color: #ffffff;
-      font-weight: 500;
-    }
-
-    .file-icon {
-      flex-shrink: 0;
-      color: var(--orange-accent);
-    }
-
-    .file-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .file-tag {
-      font-size: 9px;
-      margin-left: auto;
-      padding: 1px 4px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-muted);
-    }
-
-    .explorer-footer {
-      padding: 8px 12px;
-      font-size: 11px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* -------------------------------------------------------------
-       COLUMN 2: VERILOG EDITOR
-       ------------------------------------------------------------- */
-    #editor-column {
-      width: 360px;
-      min-width: 240px;
-      max-width: 600px;
-      background-color: var(--bg-editor);
-      border-right: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      transition: width 0.2s ease, margin-left 0.2s ease;
-    }
-
-    #editor-column.collapsed {
-      margin-left: -360px;
-    }
-
-    .editor-tab-bar {
-      display: flex;
-      align-items: center;
-      height: 34px;
-      background-color: var(--toolbar-bg);
-      border-bottom: 1px solid var(--border-color);
-      user-select: none;
-      padding: 0 4px;
-    }
-
-    .editor-tab {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      height: 28px;
-      padding: 0 10px;
-      border-radius: 4px;
-      background: var(--bg-editor);
-      color: var(--text-color);
-      font-size: 12px;
-      font-family: inherit;
-      border-top: 2px solid var(--orange-accent);
-    }
-
-    .editor-hint {
-      margin-left: auto;
-      font-size: 11px;
-      color: var(--text-muted);
-      padding-right: 8px;
-    }
-
-    .editor-body {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .editor-line-numbers {
-      width: 40px;
-      padding: 10px 6px;
-      background-color: rgba(0, 0, 0, 0.12);
-      border-right: 1px solid var(--border-color);
-      color: var(--text-muted);
-      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
-      line-height: 1.5;
-      text-align: right;
-      user-select: none;
-      overflow: hidden;
-      white-space: pre-line;
-    }
-
-    #verilog-editor {
-      flex: 1;
-      height: 100%;
-      padding: 10px 12px;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--text-color);
-      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
-      line-height: 1.5;
-      tab-size: 2;
-      resize: none;
-      white-space: pre;
-      overflow: auto;
-    }
-
-    /* -------------------------------------------------------------
-       COLUMN 3: CIRCUIT VISUALIZER
-       ------------------------------------------------------------- */
+    /* CIRCUIT VISUALIZER (Full viewport preview) */
     #circuit-column {
       flex: 1;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -278,8 +65,8 @@
     #toolbar {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
+      gap: 4px;
+      padding: 4px 10px;
       background-color: var(--toolbar-bg);
       border-bottom: 1px solid var(--border-color);
       font-size: 12px;
@@ -300,11 +87,11 @@
       background: transparent;
       color: var(--text-color);
       font-family: inherit;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 500;
       cursor: pointer;
       user-select: none;
-      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
     }
 
     .btn:hover {
@@ -322,33 +109,55 @@
       padding: 0;
     }
 
-    /* Compile Button (Prominent Hammer / Gear) */
+    /* Compile Button (JetBrains Academic Hammer matching request) */
     #btn-compile {
-      color: #ffffff;
-      background: rgba(245, 138, 60, 0.14);
-      border-color: rgba(245, 138, 60, 0.4);
-      font-weight: 600;
+      position: relative;
+      color: var(--text-color);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-color);
+      font-weight: 500;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
 
     #btn-compile:hover {
-      background: rgba(245, 138, 60, 0.28);
-      border-color: var(--orange-accent);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-hover);
       color: #ffffff;
-      box-shadow: 0 0 8px rgba(245, 138, 60, 0.3);
+    }
+
+    #btn-compile.dirty {
+      background: rgba(245, 138, 60, 0.12);
+      border-color: rgba(245, 138, 60, 0.45);
+      color: #ffffff;
+    }
+
+    #btn-compile.dirty:hover {
+      background: rgba(245, 138, 60, 0.22);
+      border-color: var(--orange-accent);
+    }
+
+    .compile-dirty-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--orange-accent);
+      margin-left: 2px;
+      display: inline-block;
     }
 
     #btn-compile.compiling {
       pointer-events: none;
-      opacity: 0.8;
+      opacity: 0.85;
       border-color: var(--warn-color);
     }
 
     #btn-compile.compiling .compile-icon {
-      animation: spin 0.8s linear infinite;
+      animation: pulse-hammer 0.7s ease-in-out infinite;
     }
 
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
+    @keyframes pulse-hammer {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 1; color: var(--orange-accent); }
     }
 
     /* Unified Run / Pause toggle button */
@@ -361,7 +170,7 @@
 
     #btn-run-pause:hover {
       border-color: var(--run-green);
-      background: rgba(89, 168, 105, 0.12);
+      background: rgba(89, 168, 105, 0.14);
       color: #ffffff;
     }
 
@@ -369,13 +178,7 @@
       background: var(--run-green-bg);
       border-color: var(--run-green);
       color: #8be09b;
-      box-shadow: 0 0 10px var(--run-green-glow), inset 0 0 4px rgba(89, 168, 105, 0.2);
-    }
-
-    #btn-run-pause.is-running:hover {
-      background: rgba(89, 168, 105, 0.25);
-      box-shadow: 0 0 14px rgba(89, 168, 105, 0.6), inset 0 0 6px rgba(89, 168, 105, 0.3);
-      color: #ffffff;
+      box-shadow: 0 0 8px var(--run-green-glow);
     }
 
     .btn-icon {
@@ -394,7 +197,7 @@
       width: 1px;
       height: 16px;
       background-color: var(--border-color);
-      margin: 0 3px;
+      margin: 0 2px;
     }
 
     /* Toolbar Checkbox */
@@ -453,9 +256,9 @@
     #status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 3px 8px;
-      border-radius: 12px;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 10px;
       font-size: 11px;
       font-weight: 500;
       background: rgba(255, 255, 255, 0.05);
@@ -464,54 +267,66 @@
     }
 
     .status-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .dot-ready { background-color: var(--run-green); }
-    .dot-running { background-color: #59a869; box-shadow: 0 0 6px #59a869; }
+    .dot-ready { background-color: #57965c; }
+    .dot-running { background-color: #59a869; box-shadow: 0 0 6px rgba(89, 168, 105, 0.8); }
     .dot-paused { background-color: var(--warn-color); }
-    .dot-loading { background-color: var(--orange-accent); animation: status-pulse 1s ease-in-out infinite; }
+    .dot-loading { background-color: var(--orange-accent); animation: pulse 1s infinite; }
     .dot-error { background-color: var(--error-text); }
 
-    @keyframes status-pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.35); opacity: 0.5; }
+    .status-ready { color: #8bb88e; }
+    .status-running { color: #8be09b; }
+    .status-paused { color: #e5c07b; }
+    .status-loading { color: var(--orange-accent); }
+    .status-error { color: #f75454; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
     }
 
-    /* Error banner */
+    /* Error Banner */
     #error-banner {
       display: none;
-      align-items: flex-start;
+      align-items: center;
       gap: 8px;
-      background-color: var(--error-bg);
+      padding: 6px 12px;
+      background: var(--error-bg);
       border-bottom: 1px solid var(--error-border);
-      color: #ff9e9e;
-      padding: 8px 12px;
-      font-size: 11px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      white-space: pre-wrap;
-      max-height: 120px;
-      overflow-y: auto;
-      z-index: 99;
+      color: var(--error-text);
+      font-size: 11.5px;
+      z-index: 50;
+      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
     }
 
-    #error-banner .icon-error {
-      color: var(--error-text);
+    .error-icon {
       flex-shrink: 0;
-      margin-top: 1px;
+      color: var(--error-text);
+    }
+
+    .error-msg {
+      flex: 1;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .error-close {
-      margin-left: auto;
-      cursor: pointer;
-      color: #ff9e9e;
-      background: none;
-      border: none;
       font-size: 14px;
+      color: var(--error-text);
+      opacity: 0.8;
+      cursor: pointer;
+      background: transparent;
+      border: none;
       padding: 0 4px;
+    }
+
+    .error-close:hover {
+      opacity: 1;
     }
 
     /* Paper & Canvas */
@@ -519,20 +334,17 @@
       flex: 1;
       position: relative;
       overflow: hidden;
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg-color);
-      background-image: radial-gradient(var(--border-color) 1.2px, transparent 1.2px);
-      background-size: 20px 20px;
+      background: #18191b;
     }
 
     #paper {
       width: 100%;
       height: 100%;
+      overflow: hidden;
     }
 
     /* Empty state */
-    .empty-state {
+    #empty-state {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -540,8 +352,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      color: var(--text-muted);
+      gap: 10px;
       pointer-events: none;
       text-align: center;
     }
@@ -566,106 +377,18 @@
 <body>
 
 <div id="app-container">
-
-  <!-- COLUMN 1: File Explorer -->
-  <aside id="sidebar-explorer">
-    <div class="sidebar-header">
-      <img src="./digital_icon.svg" class="app-icon-img" alt="Digital" />
-      <span class="app-title">Digital</span>
-      <span class="app-badge">Verilog</span>
-    </div>
-    <div class="explorer-section-title">Project Samples</div>
-    <ul id="file-list" class="file-list">
-      <li class="file-item active" data-id="ffd">
-        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
-          <path d="M3 2h7l4 4v8H3z"/>
-        </svg>
-        <span class="file-name">test_circuit.v</span>
-        <span class="file-tag">FF-D</span>
-      </li>
-      <li class="file-item" data-id="halfadder">
-        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
-          <path d="M3 2h7l4 4v8H3z"/>
-        </svg>
-        <span class="file-name">half_adder.v</span>
-        <span class="file-tag">Logic</span>
-      </li>
-      <li class="file-item" data-id="fulladder">
-        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
-          <path d="M3 2h7l4 4v8H3z"/>
-        </svg>
-        <span class="file-name">full_adder.v</span>
-        <span class="file-tag">Adder</span>
-      </li>
-      <li class="file-item" data-id="counter">
-        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
-          <path d="M3 2h7l4 4v8H3z"/>
-        </svg>
-        <span class="file-name">counter.v</span>
-        <span class="file-tag">4-Bit</span>
-      </li>
-      <li class="file-item" data-id="mux2">
-        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
-          <path d="M3 2h7l4 4v8H3z"/>
-        </svg>
-        <span class="file-name">mux2.v</span>
-        <span class="file-tag">Mux</span>
-      </li>
-      <li class="file-item" data-id="gates">
-        <svg class="file-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3">
-          <path d="M3 2h7l4 4v8H3z"/>
-        </svg>
-        <span class="file-name">gates.v</span>
-        <span class="file-tag">Gates</span>
-      </li>
-    </ul>
-    <div class="explorer-footer">
-      <span>6 Circuit Samples</span>
-      <span style="font-size: 10px; color: var(--orange-accent);">Phase 1 MVP</span>
-    </div>
-  </aside>
-
-  <!-- COLUMN 2: Verilog Editor -->
-  <section id="editor-column">
-    <div class="editor-tab-bar">
-      <div class="editor-tab">
-        <svg class="file-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3">
-          <path d="M3 2h7l4 4v8H3z"/>
-        </svg>
-        <span id="tab-filename">test_circuit.v</span>
-      </div>
-      <span class="editor-hint">Cmd/Ctrl+Enter to Compile</span>
-    </div>
-    <div class="editor-body">
-      <div class="editor-line-numbers" id="line-numbers">1</div>
-      <textarea id="verilog-editor" spellcheck="false" placeholder="// Enter Verilog RTL code..."></textarea>
-    </div>
-  </section>
-
-  <!-- COLUMN 3: Circuit Visualizer & Toolbar -->
+  <!-- PREVIEW ONLY: Circuit Visualizer & Toolbar -->
   <main id="circuit-column">
     <div id="toolbar">
-      <!-- Sidebar Toggle -->
-      <button id="btn-toggle-sidebar" class="btn btn-icon-only" title="Toggle File Explorer & Verilog Editor">
-        <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="12" height="12" rx="1.5"/>
-          <line x1="6" y1="2" x2="6" y2="14"/>
-        </svg>
-      </button>
-
-      <div class="separator"></div>
-
-      <!-- Prominent Compile action (Hammer icon per user requirement) -->
-      <button id="btn-compile" class="btn" title="Compile Verilog source (Manual trigger)">
+      <!-- Prominent Compile action (Hammer icon matching JetBrains build) -->
+      <button id="btn-compile" class="btn" title="Compile Verilog source (Cmd/Ctrl+Enter)">
         <span class="btn-icon compile-icon">
-          <svg class="jb-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Hammer head rotated 45 deg -->
-            <rect x="7" y="2" width="6" height="4" rx="0.8" transform="rotate(45 10 4)" fill="currentColor" fill-opacity="0.2"/>
-            <!-- Hammer handle -->
-            <path d="M7 7 L2.5 11.5 C2.1 11.9 2.1 12.5 2.5 12.9 C2.9 13.3 3.5 13.3 3.9 12.9 L8.4 8.4" stroke-width="1.6"/>
+          <svg class="jb-icon icon-hammer" viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 1C3.63261 1 3.75975 1.05272 3.85352 1.14648L4.70703 2H5.29297L6.14648 1.14648L6.22266 1.08398C6.30419 1.02963 6.40056 1 6.5 1H10.5C13.3162 1 15 3.2657 15 5.5C15 5.67329 14.9101 5.83468 14.7627 5.92578C14.6153 6.01669 14.4312 6.02471 14.2764 5.94727L12.3818 5H10.707L10 5.70703V14.5C10 14.7761 9.77614 15 9.5 15H6.5C6.22386 15 6 14.7761 6 14.5V5.70703L5.29297 5H4.70703L3.85352 5.85352C3.75975 5.94728 3.63261 6 3.5 6H1.5C1.22386 6 1 5.77614 1 5.5V1.5C1 1.22386 1.22386 1 1.5 1H3.5ZM7 14H9V6H7V14ZM2 5H3.29297L4.14648 4.14648L4.22266 4.08398C4.30419 4.02963 4.40056 4 4.5 4H5.5C5.63261 4 5.75975 4.05272 5.85352 4.14648L6.70703 5H9.29297L10.1465 4.14648L10.2227 4.08398C10.3042 4.02963 10.4006 4 10.5 4H12.5C12.5776 4 12.6542 4.01802 12.7236 4.05273L13.8936 4.6377C13.5415 3.21018 12.324 2 10.5 2H6.70703L5.85352 2.85352C5.75975 2.94728 5.63261 3 5.5 3H4.5C4.36739 3 4.24025 2.94728 4.14648 2.85352L3.29297 2H2V5Z"/>
           </svg>
         </span>
         <span class="btn-label">Compile</span>
+        <span id="btn-compile-dirty-dot" class="compile-dirty-dot" style="display: none;" title="Uncompiled changes"></span>
       </button>
 
       <!-- Unified Run / Pause toggle -->
@@ -713,306 +436,56 @@
 
       <div class="separator"></div>
 
-      <!-- Layout Mode -->
-      <label class="toolbar-checkbox" title="Fix component positions (disable manual dragging)">
-        <input type="checkbox" id="chk-fixed">
+      <!-- Layout Mode Checkbox -->
+      <label class="toolbar-checkbox" title="Fix component positions (prevent manual drag-repositioning)">
+        <input type="checkbox" id="chk-fixed" checked>
         <span class="checkbox-custom">
-          <svg class="check-icon" viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="2.5 6 4.5 8.5 9.5 3.5"/>
+          <svg class="check-icon" viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2.5,6 4.5,8.5 9.5,3.5"/>
           </svg>
         </span>
         <span>Fixed Layout</span>
       </label>
 
-      <!-- Status badge -->
-      <div id="status-badge" class="status-ready" title="Simulation state">
-        <span class="status-dot dot-ready" id="status-dot"></span>
+      <!-- Status badge pill -->
+      <div id="status-badge" class="status-ready">
+        <span id="status-dot" class="status-dot dot-ready"></span>
         <span id="status-text">Ready</span>
       </div>
     </div>
 
     <!-- Error Banner -->
     <div id="error-banner">
-      <svg class="jb-icon icon-error" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="error-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="8" cy="8" r="6"/>
-        <line x1="8" y1="5" x2="8" y2="8.5"/>
-        <circle cx="8" cy="11.2" r="0.75" fill="currentColor"/>
+        <line x1="8" y1="5" x2="8" y2="9"/>
+        <circle cx="8" cy="11.5" r="0.5" fill="currentColor"/>
       </svg>
-      <span id="error-text" style="flex:1;"></span>
-      <button class="error-close" id="btn-close-error">&times;</button>
+      <span id="error-text" class="error-msg"></span>
+      <button id="btn-close-error" class="btn btn-icon-only error-close" title="Dismiss error">&times;</button>
     </div>
 
-    <!-- Paper Container -->
+    <!-- Circuit Paper Canvas -->
     <div id="paper-container">
-      <div id="empty-state" class="empty-state">
-        <svg class="empty-icon" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="4" width="16" height="16" rx="3" fill="#2b2d30"/>
-          <path d="M8 8h8v8H8z" stroke-width="1.2"/>
-          <path d="M8 1v3M16 1v3M8 20v3M16 20v3M1 8h3M1 16h3M20 8h3M20 16h3"/>
-        </svg>
-        <div class="empty-title">Digital Circuit Simulation</div>
-        <div class="empty-subtitle">Write Verilog code and click Compile to visualize the synthesized circuit</div>
-      </div>
       <div id="paper"></div>
+      <div id="empty-state">
+        <svg class="empty-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <line x1="9" y1="3" x2="9" y2="21"/>
+          <path d="M14 9h4M14 15h4"/>
+        </svg>
+        <div class="empty-title">No Circuit Loaded</div>
+        <div class="empty-subtitle">Write Verilog code in the editor and click Compile to visualize the live circuit</div>
+      </div>
     </div>
   </main>
-
 </div>
 
 <script>
-  // ---------------------------------------------------------------
-  // SAMPLE CIRCUITS DATABASE
-  // ---------------------------------------------------------------
-  const SAMPLES = {
-    ffd: {
-      file: 'test_circuit.v',
-      code: `// Test circuit: Flip-Flop D with asynchronous reset
-module test_circuit (
-    input clk,
-    input data_in,
-    input rst,
-    output q_out,
-    output qn_out
-);
-    FFD ffd0 (
-        .clk(clk),
-        .d(data_in),
-        .rst(rst),
-        .q(q_out),
-        .qn(qn_out)
-    );
-endmodule`,
-      json: {
-        devices: {
-          dev0: { type: "Clock", net: "clk", order: 0, bits: 1, label: "clk", propagation: 100 },
-          dev1: { type: "Button", net: "data_in", order: 1, bits: 1, label: "data_in" },
-          dev2: { type: "Button", net: "rst", order: 2, bits: 1, label: "rst" },
-          dev3: { type: "Lamp", net: "q_out", order: 3, bits: 1, label: "q_out" },
-          dev4: { type: "Lamp", net: "qn_out", order: 4, bits: 1, label: "qn_out" }
-        },
-        subcircuits: {
-          FFD: {
-            devices: {
-              dev0: { type: "Input", net: "clk", order: 0, bits: 1 },
-              dev1: { type: "Input", net: "d", order: 1, bits: 1 },
-              dev2: { type: "Input", net: "rst", order: 2, bits: 1 },
-              dev3: { type: "Output", net: "q", order: 3, bits: 1 },
-              dev4: { type: "Output", net: "qn", order: 4, bits: 1 },
-              dev5: { type: "Not", bits: 1, hide_label: true },
-              dev6: { type: "Dff", bits: 1, hide_label: true, polarity: { clock: true, arst: true }, arst_value: "0" }
-            },
-            connectors: [
-              { to: { id: "dev6", port: "clk" }, from: { id: "dev0", port: "out" }, name: "clk" },
-              { to: { id: "dev6", port: "in" }, from: { id: "dev1", port: "out" }, name: "d" },
-              { to: { id: "dev6", port: "arst" }, from: { id: "dev2", port: "out" }, name: "rst" },
-              { to: { id: "dev3", port: "in" }, from: { id: "dev6", port: "out" }, name: "q" },
-              { to: { id: "dev5", port: "in" }, from: { id: "dev6", port: "out" }, name: "q" },
-              { to: { id: "dev4", port: "in" }, from: { id: "dev5", port: "out" }, name: "qn" }
-            ]
-          }
-        },
-        connectors: []
-      }
-    },
-    halfadder: {
-      file: 'half_adder.v',
-      code: `// Combinational 1-Bit Half Adder
-module half_adder (
-    input a,
-    input b,
-    output sum,
-    output carry
-);
-    assign sum = a ^ b;
-    assign carry = a & b;
-endmodule`,
-      json: {
-        devices: {
-          dev0: { type: "Button", net: "a", order: 0, bits: 1, label: "a" },
-          dev1: { type: "Button", net: "b", order: 1, bits: 1, label: "b" },
-          dev2: { type: "Xor", bits: 1 },
-          dev3: { type: "And", bits: 1 },
-          dev4: { type: "Lamp", net: "sum", order: 2, bits: 1, label: "sum" },
-          dev5: { type: "Lamp", net: "carry", order: 3, bits: 1, label: "carry" }
-        },
-        connectors: [
-          { from: { id: "dev0", port: "out" }, to: { id: "dev2", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev2", port: "in2" } },
-          { from: { id: "dev0", port: "out" }, to: { id: "dev3", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev3", port: "in2" } },
-          { from: { id: "dev2", port: "out" }, to: { id: "dev4", port: "in" } },
-          { from: { id: "dev3", port: "out" }, to: { id: "dev5", port: "in" } }
-        ]
-      }
-    },
-    fulladder: {
-      file: 'full_adder.v',
-      code: `// Full Adder 1-bit with Carry-in and Carry-out
-module full_adder (
-    input a,
-    input b,
-    input cin,
-    output sum,
-    output cout
-);
-    assign sum = a ^ b ^ cin;
-    assign cout = (a & b) | (cin & (a ^ b));
-endmodule`,
-      json: {
-        devices: {
-          dev0: { type: "Button", net: "a", order: 0, bits: 1, label: "a" },
-          dev1: { type: "Button", net: "b", order: 1, bits: 1, label: "b" },
-          dev2: { type: "Button", net: "cin", order: 2, bits: 1, label: "cin" },
-          dev3: { type: "Xor", bits: 1 },
-          dev4: { type: "Xor", bits: 1 },
-          dev5: { type: "And", bits: 1 },
-          dev6: { type: "And", bits: 1 },
-          dev7: { type: "Or", bits: 1 },
-          dev8: { type: "Lamp", net: "sum", order: 3, bits: 1, label: "sum" },
-          dev9: { type: "Lamp", net: "cout", order: 4, bits: 1, label: "cout" }
-        },
-        connectors: [
-          { from: { id: "dev0", port: "out" }, to: { id: "dev3", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev3", port: "in2" } },
-          { from: { id: "dev3", port: "out" }, to: { id: "dev4", port: "in1" } },
-          { from: { id: "dev2", port: "out" }, to: { id: "dev4", port: "in2" } },
-          { from: { id: "dev4", port: "out" }, to: { id: "dev8", port: "in" } },
-          { from: { id: "dev0", port: "out" }, to: { id: "dev5", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev5", port: "in2" } },
-          { from: { id: "dev3", port: "out" }, to: { id: "dev6", port: "in1" } },
-          { from: { id: "dev2", port: "out" }, to: { id: "dev6", port: "in2" } },
-          { from: { id: "dev5", port: "out" }, to: { id: "dev7", port: "in1" } },
-          { from: { id: "dev6", port: "out" }, to: { id: "dev7", port: "in2" } },
-          { from: { id: "dev7", port: "out" }, to: { id: "dev9", port: "in" } }
-        ]
-      }
-    },
-    counter: {
-      file: 'counter.v',
-      code: `// 4-bit Synchronous Binary Counter
-module counter (
-    input clk,
-    input rst,
-    output [3:0] q
-);
-    reg [3:0] count;
-    always @(posedge clk or posedge rst) begin
-        if (rst)
-            count <= 4'b0000;
-        else
-            count <= count + 1'b1;
-    end
-    assign q = count;
-endmodule`,
-      json: {
-        devices: {
-          dev0: { type: "Clock", net: "clk", order: 0, bits: 1, label: "clk", propagation: 100 },
-          dev1: { type: "Button", net: "rst", order: 1, bits: 1, label: "rst" },
-          dev2: { type: "Dff", bits: 4, polarity: { clock: true, arst: true }, arst_value: "0000" },
-          dev3: { type: "Constant", constant: "0001", bits: 4 },
-          dev4: { type: "Addition", bits: { in1: 4, in2: 4, out: 4 } },
-          dev5: { type: "NumDisplay", net: "q", order: 2, bits: 4, label: "q" }
-        },
-        connectors: [
-          { from: { id: "dev0", port: "out" }, to: { id: "dev2", port: "clk" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev2", port: "arst" } },
-          { from: { id: "dev2", port: "out" }, to: { id: "dev4", port: "in1" } },
-          { from: { id: "dev3", port: "out" }, to: { id: "dev4", port: "in2" } },
-          { from: { id: "dev4", port: "out" }, to: { id: "dev2", port: "in" } },
-          { from: { id: "dev2", port: "out" }, to: { id: "dev5", port: "in" } }
-        ]
-      }
-    },
-    mux2: {
-      file: 'mux2.v',
-      code: `// 2-to-1 Multiplexer
-module mux2 (
-    input d0,
-    input d1,
-    input sel,
-    output y
-);
-    assign y = sel ? d1 : d0;
-endmodule`,
-      json: {
-        devices: {
-          dev0: { type: "Button", net: "d0", order: 0, bits: 1, label: "d0" },
-          dev1: { type: "Button", net: "d1", order: 1, bits: 1, label: "d1" },
-          dev2: { type: "Button", net: "sel", order: 2, bits: 1, label: "sel" },
-          dev3: { type: "Mux", bits: { in: 1, sel: 1 } },
-          dev4: { type: "Lamp", net: "y", order: 3, bits: 1, label: "y" }
-        },
-        connectors: [
-          { from: { id: "dev0", port: "out" }, to: { id: "dev3", port: "in0" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev3", port: "in1" } },
-          { from: { id: "dev2", port: "out" }, to: { id: "dev3", port: "sel" } },
-          { from: { id: "dev3", port: "out" }, to: { id: "dev4", port: "in" } }
-        ]
-      }
-    },
-    gates: {
-      file: 'gates.v',
-      code: `// All Primary Logic Gates
-module gates (
-    input a,
-    input b,
-    output out_and,
-    output out_or,
-    output out_xor,
-    output out_nand,
-    output out_nor
-);
-    assign out_and  = a & b;
-    assign out_or   = a | b;
-    assign out_xor  = a ^ b;
-    assign out_nand = ~(a & b);
-    assign out_nor  = ~(a | b);
-endmodule`,
-      json: {
-        devices: {
-          dev0: { type: "Button", net: "a", order: 0, bits: 1, label: "a" },
-          dev1: { type: "Button", net: "b", order: 1, bits: 1, label: "b" },
-          dev2: { type: "And", bits: 1 },
-          dev3: { type: "Or", bits: 1 },
-          dev4: { type: "Xor", bits: 1 },
-          dev5: { type: "Nand", bits: 1 },
-          dev6: { type: "Nor", bits: 1 },
-          dev7: { type: "Lamp", net: "out_and", order: 2, bits: 1, label: "out_and" },
-          dev8: { type: "Lamp", net: "out_or", order: 3, bits: 1, label: "out_or" },
-          dev9: { type: "Lamp", net: "out_xor", order: 4, bits: 1, label: "out_xor" },
-          dev10: { type: "Lamp", net: "out_nand", order: 5, bits: 1, label: "out_nand" },
-          dev11: { type: "Lamp", net: "out_nor", order: 6, bits: 1, label: "out_nor" }
-        },
-        connectors: [
-          { from: { id: "dev0", port: "out" }, to: { id: "dev2", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev2", port: "in2" } },
-          { from: { id: "dev0", port: "out" }, to: { id: "dev3", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev3", port: "in2" } },
-          { from: { id: "dev0", port: "out" }, to: { id: "dev4", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev4", port: "in2" } },
-          { from: { id: "dev0", port: "out" }, to: { id: "dev5", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev5", port: "in2" } },
-          { from: { id: "dev0", port: "out" }, to: { id: "dev6", port: "in1" } },
-          { from: { id: "dev1", port: "out" }, to: { id: "dev6", port: "in2" } },
-          { from: { id: "dev2", port: "out" }, to: { id: "dev7", port: "in" } },
-          { from: { id: "dev3", port: "out" }, to: { id: "dev8", port: "in" } },
-          { from: { id: "dev4", port: "out" }, to: { id: "dev9", port: "in" } },
-          { from: { id: "dev5", port: "out" }, to: { id: "dev10", port: "in" } },
-          { from: { id: "dev6", port: "out" }, to: { id: "dev11", port: "in" } }
-        ]
-      }
-    }
-  };
-
-  // State variables
   let circuit = null;
   let paper = null;
   let currentCircuitJson = null;
-  let currentSampleId = 'ffd';
   let zoomLevel = 1.0;
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const isSplitMode = urlParams.get('mode') === 'split';
 
   const PLAY_SVG = `<svg class="jb-icon icon-play" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#59a869" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <polygon points="5,3 13,8 5,13" fill="#59a869" fill-opacity="0.2" stroke="#59a869" stroke-width="1.5"/>
@@ -1034,21 +507,12 @@ endmodule`,
     }
   }
 
-  function updateLineNumbers() {
-    const editor = document.getElementById('verilog-editor');
-    const linesEl = document.getElementById('line-numbers');
-    const lineCount = editor.value.split('\n').length;
-    let numbers = '';
-    for (let i = 1; i <= Math.max(lineCount, 1); i++) {
-      numbers += i + '\n';
-    }
-    linesEl.textContent = numbers;
-  }
-
   function setStatus(text, type) {
     const badgeEl = document.getElementById('status-badge');
     const textEl = document.getElementById('status-text');
     const dotEl = document.getElementById('status-dot');
+
+    if (!badgeEl || !textEl || !dotEl) return;
     textEl.textContent = text;
 
     dotEl.className = 'status-dot';
@@ -1081,16 +545,20 @@ endmodule`,
 
   function hideError() {
     const banner = document.getElementById('error-banner');
-    banner.style.display = 'none';
-    document.getElementById('error-text').textContent = '';
+    if (banner) {
+      banner.style.display = 'none';
+      document.getElementById('error-text').textContent = '';
+    }
   }
 
   function showError(msg) {
     const banner = document.getElementById('error-banner');
     const errorText = document.getElementById('error-text');
-    errorText.textContent = msg;
-    banner.style.display = 'flex';
-    setStatus('Error', 'error');
+    if (banner && errorText) {
+      errorText.textContent = msg;
+      banner.style.display = 'flex';
+      setStatus('Error', 'error');
+    }
   }
 
   function destroyCurrentCircuit() {
@@ -1102,25 +570,26 @@ endmodule`,
       circuit = null;
     }
     const container = document.getElementById('paper');
-    container.innerHTML = '';
+    if (container) container.innerHTML = '';
     paper = null;
   }
 
   function updatePlayState() {
     const btn = document.getElementById('btn-run-pause');
+    if (!btn) return;
     const iconSpan = btn.querySelector('.btn-icon');
     const labelSpan = btn.querySelector('.btn-label');
 
     if (circuit && circuit.running) {
       btn.classList.add('is-running');
       btn.setAttribute('title', 'Pause simulation (Space)');
-      iconSpan.innerHTML = PAUSE_SVG;
+      if (iconSpan) iconSpan.innerHTML = PAUSE_SVG;
       if (labelSpan) labelSpan.textContent = 'Pause';
       setStatus('Running', 'running');
     } else {
       btn.classList.remove('is-running');
       btn.setAttribute('title', 'Start simulation (Space)');
-      iconSpan.innerHTML = PLAY_SVG;
+      if (iconSpan) iconSpan.innerHTML = PLAY_SVG;
       if (labelSpan) labelSpan.textContent = 'Run';
       if (circuit) {
         setStatus('Paused', 'paused');
@@ -1140,41 +609,39 @@ endmodule`,
     updatePlayState();
   }
 
-  function triggerCompile() {
+  // Compiler State and Dirty tracking
+  window.compilerState = {
+    isDirty: false
+  };
+
+  function setDirty(isDirty) {
+    window.compilerState.isDirty = Boolean(isDirty);
     const compileBtn = document.getElementById('btn-compile');
-    compileBtn.classList.add('compiling');
+    const dirtyDot = document.getElementById('btn-compile-dirty-dot');
+
+    if (compileBtn) {
+      compileBtn.classList.toggle('dirty', Boolean(isDirty));
+    }
+    if (dirtyDot) {
+      dirtyDot.style.display = isDirty ? 'inline-block' : 'none';
+    }
+  }
+  window.setDirty = setDirty;
+
+  function triggerCompile() {
+    setDirty(false);
+    const compileBtn = document.getElementById('btn-compile');
+    if (compileBtn) compileBtn.classList.add('compiling');
     setStatus('Synthesizing...', 'loading');
     hideError();
 
-    // Check if IDE Native bridge is available
+    // Trigger JetBrains native compilation query
     if (typeof window.triggerCompileNative === 'function') {
       window.triggerCompileNative();
       setTimeout(() => {
-        compileBtn.classList.remove('compiling');
+        if (compileBtn) compileBtn.classList.remove('compiling');
       }, 300);
-      return;
     }
-
-    // Standalone Web Mode Synthesis Simulation
-    setTimeout(() => {
-      compileBtn.classList.remove('compiling');
-      const editorCode = document.getElementById('verilog-editor').value;
-
-      // Basic client-side syntax validation check
-      if (!editorCode.includes('module') || !editorCode.includes('endmodule')) {
-        showError('Verilog Syntax Error: Missing module declaration or endmodule.');
-        return;
-      }
-
-      // Check if matching sample
-      const sample = SAMPLES[currentSampleId];
-      if (sample && sample.json) {
-        loadCircuit(sample.json);
-      } else {
-        // Fallback generic circuit
-        loadCircuit(SAMPLES.ffd.json);
-      }
-    }, 400);
   }
 
   function resetCircuit() {
@@ -1216,34 +683,6 @@ endmodule`,
     }
   }
 
-  function toggleSidebar() {
-    const explorer = document.getElementById('sidebar-explorer');
-    const editor = document.getElementById('editor-column');
-    explorer.classList.toggle('collapsed');
-    editor.classList.toggle('collapsed');
-  }
-
-  function loadSample(sampleId) {
-    const sample = SAMPLES[sampleId];
-    if (!sample) return;
-    currentSampleId = sampleId;
-
-    document.getElementById('tab-filename').textContent = sample.file;
-    const editor = document.getElementById('verilog-editor');
-    editor.value = sample.code;
-    updateLineNumbers();
-
-    // Highlight file in list
-    document.querySelectorAll('.file-item').forEach(item => {
-      item.classList.toggle('active', item.dataset.id === sampleId);
-    });
-
-    // Auto-load circuit in standalone mode
-    if (!isSplitMode && sample.json) {
-      loadCircuit(sample.json);
-    }
-  }
-
   function loadCircuit(json) {
     destroyCurrentCircuit();
     hideError();
@@ -1252,7 +691,9 @@ endmodule`,
     const emptyState = document.getElementById('empty-state');
     if (emptyState) emptyState.style.display = 'none';
 
-    if (!window.digital || !window.digital.Circuit) {
+    const djs = window.digital || window.digitaljs;
+    const hasJquery = typeof $ !== 'undefined';
+    if (!djs || !djs.Circuit || !hasJquery) {
       console.warn('Digital runtime is loading...');
       setStatus('Loading runtime...', 'loading');
       setTimeout(() => loadCircuit(json), 150);
@@ -1260,10 +701,12 @@ endmodule`,
     }
 
     try {
-      circuit = new window.digital.Circuit(json, { layoutEngine: "elkjs" });
-      paper = circuit.displayOn($('#paper'));
+      circuit = new djs.Circuit(json, { layoutEngine: "elkjs" });
+      const paperContainer = hasJquery ? $('#paper') : document.getElementById('paper');
+      paper = circuit.displayOn(paperContainer);
 
-      const isFixed = document.getElementById('chk-fixed').checked;
+      const chkFixed = document.getElementById('chk-fixed');
+      const isFixed = chkFixed ? chkFixed.checked : true;
       if (paper && paper.fixed) {
         paper.fixed(isFixed);
       }
@@ -1284,6 +727,7 @@ endmodule`,
   window.loadCircuitFromBase64 = function(b64) {
     const compileBtn = document.getElementById('btn-compile');
     if (compileBtn) compileBtn.classList.remove('compiling');
+    setDirty(false);
     try {
       const jsonStr = decodeUtf8(b64);
       const data = JSON.parse(jsonStr);
@@ -1306,71 +750,49 @@ endmodule`,
   };
 
   window.setSynthesizing = function() {
-    const compileBtn = document.getElementById('btn-compile');
-    if (compileBtn) compileBtn.classList.add('compiling');
+    setDirty(false);
     setStatus('Synthesizing...', 'loading');
+    hideError();
   };
 
-  window.triggerCompile = triggerCompile;
-
+  // Event Listeners setup
   document.addEventListener('DOMContentLoaded', () => {
-    // Buttons
     document.getElementById('btn-compile').addEventListener('click', triggerCompile);
     document.getElementById('btn-run-pause').addEventListener('click', toggleSimulation);
     document.getElementById('btn-reset').addEventListener('click', resetCircuit);
     document.getElementById('btn-zoom-in').addEventListener('click', zoomIn);
     document.getElementById('btn-zoom-out').addEventListener('click', zoomOut);
     document.getElementById('btn-fit').addEventListener('click', fitView);
-    document.getElementById('btn-toggle-sidebar').addEventListener('click', toggleSidebar);
     document.getElementById('btn-close-error').addEventListener('click', hideError);
 
-    // Fixed layout checkbox
     document.getElementById('chk-fixed').addEventListener('change', (e) => {
       if (paper && paper.fixed) {
         paper.fixed(e.target.checked);
       }
     });
 
-    // File list selection
-    document.querySelectorAll('.file-item').forEach(item => {
-      item.addEventListener('click', () => {
-        loadSample(item.dataset.id);
-      });
-    });
-
-    // Verilog editor events
-    const editor = document.getElementById('verilog-editor');
-    editor.addEventListener('input', updateLineNumbers);
-    editor.addEventListener('scroll', () => {
-      document.getElementById('line-numbers').scrollTop = editor.scrollTop;
-    });
-
-    // Keybindings: Cmd/Ctrl+Enter to Compile, Space to Run/Pause
+    // Global keyboard shortcuts
     window.addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault();
         triggerCompile();
-        return;
-      }
-      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) {
-        return;
-      }
-      if (e.code === 'Space') {
+      } else if (e.code === 'Space' && e.target === document.body) {
         e.preventDefault();
         toggleSimulation();
+      } else if (e.key === '+' || e.key === '=') {
+        if (!e.metaKey && !e.ctrlKey) {
+          zoomIn();
+        }
+      } else if (e.key === '-' || e.key === '_') {
+        if (!e.metaKey && !e.ctrlKey) {
+          zoomOut();
+        }
       }
     });
 
-    // Initial mode configuration
-    if (isSplitMode) {
-      // In JetBrains split preview, collapse columns by default to focus on circuit
-      document.getElementById('sidebar-explorer').classList.add('collapsed');
-      document.getElementById('editor-column').classList.add('collapsed');
-    } else {
-      // In standalone mode, load default sample
-      loadSample('ffd');
-    }
+    setStatus('Ready', 'ready');
   });
 </script>
+
 </body>
 </html>

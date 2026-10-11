@@ -55,7 +55,7 @@ public class DigitalPreviewEditor extends UserDataHolderBase implements FileEdit
         compileQuery.addHandler(request -> {
             if ("compile".equals(request)) {
                 if (onCompileRequested != null) {
-                    onCompileRequested.run();
+                    ApplicationManager.getApplication().invokeLater(onCompileRequested);
                 }
             }
             return new JBCefJSQuery.Response("ok");

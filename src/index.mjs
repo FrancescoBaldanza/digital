@@ -119,12 +119,16 @@ export class Circuit extends HeadlessCircuit {
                 div.dialog("option", "height", maxHeight());
         }
         const observer = new ResizeObserver(fixSize);
-        observer.observe(div.get(0));
-        const shutdownCallback = () => { div.dialog('close'); };
+        if (div.get(0)) {
+            observer.observe(div.get(0));
+        }
+        const shutdownCallback = () => { try { div.dialog('close'); } catch(_) {} };
         this.listenToOnce(this, 'shutdown', shutdownCallback);
         const dialog = div.dialog({
             width: 'auto',
             height: 'auto',
+            dialogClass: 'djs-subwindow',
+            modal: false,
             maxWidth: $(window).width() * 0.9,
             maxHeight: $(window).height() * 0.9,
             resizable: type !== "Memory",
@@ -134,6 +138,24 @@ export class Circuit extends HeadlessCircuit {
                 observer.disconnect();
             }
         });
+
+        // Customize header with module chip icon and clean title
+        const titlebar = dialog.closest('.ui-dialog').find('.ui-dialog-titlebar');
+        const titleSpan = titlebar.find('.ui-dialog-title');
+        const currentTitle = titleSpan.text();
+        if (currentTitle && !titlebar.find('.djs-module-chip-icon').length) {
+            titleSpan.before(`
+                <svg class="djs-module-chip-icon" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="#dfe1e5" stroke-width="1.3" style="margin-right: 6px; flex-shrink: 0;">
+                    <rect x="3" y="3" width="10" height="10" rx="1.5"></rect>
+                    <line x1="1" y1="5" x2="3" y2="5"></line>
+                    <line x1="1" y1="8" x2="3" y2="8"></line>
+                    <line x1="1" y1="11" x2="3" y2="11"></line>
+                    <line x1="13" y1="5" x2="15" y2="5"></line>
+                    <line x1="13" y1="8" x2="15" y2="8"></line>
+                    <line x1="13" y1="11" x2="15" y2="11"></line>
+                </svg>
+            `);
+        }
     }
     displayOn(elem) {
         return this._makePaper(elem, this._graph);
@@ -187,38 +209,96 @@ export class Circuit extends HeadlessCircuit {
             paper.unfreeze();
         });
         this.listenTo(paper, 'render:done', () => {
-            paper.fitToContent({ padding: 30, allowNewOrigin: 'any' });
+            paper.fitToContent({ padding: 16, allowNewOrigin: 'any' });
         });
         paper.unfreeze();
         // subcircuit display
         const circuit = this;
         this.listenTo(paper, 'open:subcircuit', (model) => {
+            const cellType = model.get('celltype') || 'Module';
+            const label = model.get('label') || '';
+            const title = `${cellType} ${label}`.trim();
             const subcircuitModal = $('<div>', {
-                title: model.get('celltype') + ' ' + model.get('label')
+                title: title,
+                class: 'djs-subcircuit-modal'
             }).appendTo('html > body');
 
-            // Create and set up paper
-            const pdiv = $('<div>').appendTo(subcircuitModal);
-            const graph = model.get('graph');
-            const paper = this._makePaper(pdiv, graph);
-            paper.once('render:done', () => {
-                this._windowCallback('Subcircuit', subcircuitModal, () => {
-                    this._engine.unobserveGraph(graph);
-                    paper.remove();
-                    subcircuitModal.remove();
-                });
-            });
-
-            // Create buttons
+            // Create floating HUD tools overlay
             model.set("zoomLevel", 0);
-            const buttonGroup = $('<div class="btn-group"></div>')
+            const buttonGroup = $('<div class="btn-group djs-subwindow-tools"></div>');
             for (const button of this._subcircuitButtons) {
-                $('<button class="btn btn-secondary"></button>')
+                $('<button type="button" class="btn btn-secondary djs-subwindow-btn"></button>')
+                    .attr('title', button.id === 'zoomIn' ? 'Zoom In' : 'Zoom Out')
                     .append($('<strong></strong>').text(button.buttonText))
-                    .on('click', {circuit, model, paper}, (event) => button.callback(event.data))
                     .appendTo(buttonGroup);
             }
-            buttonGroup.prependTo(subcircuitModal);
+            buttonGroup.appendTo(subcircuitModal);
+
+            // Container for inner paper
+            const pdiv = $('<div>', { class: 'djs-subcircuit-paper-container' }).appendTo(subcircuitModal);
+            const graph = model.get('graph');
+            const subPaper = this._makePaper(pdiv, graph);
+
+            subPaper.once('render:done', () => {
+                this._windowCallback('Subcircuit', subcircuitModal, () => {
+                    this._engine.unobserveGraph(graph);
+                    subPaper.remove();
+                    subcircuitModal.remove();
+                });
+
+                // Calculate optimal tight bounding box without margins
+                try {
+                    subPaper.fitToContent({ padding: 16, allowNewOrigin: 'any' });
+                    const bbox = subPaper.getContentBBox();
+                    const targetWidth = Math.min(Math.max(bbox.width + 36, 320), $(window).width() * 0.85);
+                    const targetHeight = Math.min(Math.max(bbox.height + 72, 220), $(window).height() * 0.85);
+                    subcircuitModal.dialog('option', {
+                        width: targetWidth,
+                        height: targetHeight
+                    });
+                    subPaper.fitToContent({ padding: 16, allowNewOrigin: 'any' });
+                } catch (_) {}
+            });
+
+            // Bind button click callbacks with circuit, model and subPaper
+            buttonGroup.find('.djs-subwindow-btn').each(function(idx) {
+                const btnConfig = circuit._subcircuitButtons[idx];
+                if (btnConfig) {
+                    $(this).on('click', () => {
+                        btnConfig.callback({ circuit, model, paper: subPaper });
+                    });
+                }
+            });
+
+            // Smooth mouse drag panning inside subcircuit modal
+            let isPanning = false;
+            let startClientX = 0, startClientY = 0;
+            let initialOrigin = { tx: 0, ty: 0 };
+            const onBlankPointerDown = (evt) => {
+                isPanning = true;
+                startClientX = evt.clientX;
+                startClientY = evt.clientY;
+                initialOrigin = subPaper.translate();
+            };
+            const onMouseMove = (evt) => {
+                if (!isPanning) return;
+                const dx = evt.clientX - startClientX;
+                const dy = evt.clientY - startClientY;
+                subPaper.translate(initialOrigin.tx + dx, initialOrigin.ty + dy);
+            };
+            const onMouseUp = () => {
+                isPanning = false;
+            };
+
+            subPaper.on('blank:pointerdown', onBlankPointerDown);
+            $(window).on('mousemove', onMouseMove);
+            $(window).on('mouseup', onMouseUp);
+
+            subcircuitModal.on('dialogclose', () => {
+                subPaper.off('blank:pointerdown', onBlankPointerDown);
+                $(window).off('mousemove', onMouseMove);
+                $(window).off('mouseup', onMouseUp);
+            });
         });
         this.listenTo(paper, 'open:memorycontent', (subcircuitModal, closeCallback) => {
             this._windowCallback('Memory', subcircuitModal, closeCallback);
@@ -234,4 +314,19 @@ export class Circuit extends HeadlessCircuit {
         return paper;
     }
 };
+
+if (typeof window !== 'undefined') {
+    window.$ = window.$ || $;
+    window.jQuery = window.jQuery || $;
+    window.digital = window.digital || {};
+    window.digital.Circuit = Circuit;
+    window.digital.HeadlessCircuit = HeadlessCircuit;
+    window.digital.cells = cells;
+    window.digital.tools = tools;
+    window.digital.engines = engines;
+    window.digital.transform = transform;
+    window.digital.paperOptions = paperOptions;
+
+    window.digitaljs = window.digital;
+}
 

@@ -1,10 +1,12 @@
 package com.digital.plugin.editor;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.TextEditorWithPreview;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,13 +40,22 @@ public class DigitalSplitEditor extends TextEditorWithPreview {
 
     public void compile() {
         previewEditor.setDirty(false);
-        alarm.cancelAllRequests();
-        alarm.addRequest(() -> {
-            Document document = ((TextEditor) myEditor).getEditor().getDocument();
-            String code = document.getText();
-            String path = previewEditor.getFile() != null ? previewEditor.getFile().getPath() : null;
-            previewEditor.synthesizeAndRender(code, path);
-        }, 10);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            String code = ApplicationManager.getApplication().runReadAction((com.intellij.openapi.util.Computable<String>) () -> {
+                Document document = ((TextEditor) myEditor).getEditor().getDocument();
+                return document.getText();
+            });
+            VirtualFile vFile = previewEditor.getFile();
+            if (vFile == null) {
+                vFile = getFile();
+            }
+            String path = vFile != null ? vFile.getPath() : null;
+
+            alarm.cancelAllRequests();
+            alarm.addRequest(() -> {
+                previewEditor.synthesizeAndRender(code, path);
+            }, 10);
+        });
     }
 
     @Override

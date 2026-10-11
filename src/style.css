@@ -556,4 +556,153 @@ table.memeditor input.iswrite.isread {
     display: none !important;
 }
 
+/* ==========================================================================
+   Task Group 3: Subwindow Optimization & Modernization
+   ========================================================================== */
+
+/* Modern Floating Card for Subcircuit Inspection */
+.ui-dialog {
+    background: #1e1f22 !important;
+    border: 1px solid #43454a !important;
+    border-radius: 8px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "JetBrains Sans", Roboto, sans-serif !important;
+    z-index: 1050 !important;
+}
+
+/* Compact, Dark Header */
+.ui-dialog .ui-dialog-titlebar {
+    background: #2b2d30 !important;
+    border: none !important;
+    border-bottom: 1px solid #393b40 !important;
+    border-radius: 8px 8px 0 0 !important;
+    height: 36px !important;
+    padding: 0 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin: 0 !important;
+}
+
+.ui-dialog .ui-dialog-title {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #dfe1e5 !important;
+    line-height: 36px !important;
+    float: none !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Minimalist "X" Close Button (replacing retro jQuery UI sprites) */
+.ui-dialog .ui-dialog-titlebar-close {
+    position: static !important;
+    width: 24px !important;
+    height: 24px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 4px !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #868a98 !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close .ui-icon,
+.ui-dialog .ui-dialog-titlebar-close .ui-button-icon {
+    display: none !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close::after {
+    content: "✕" !important;
+    font-size: 13px !important;
+    font-family: inherit !important;
+    line-height: 1 !important;
+    display: block !important;
+}
+
+/* Subcircuit Modal Body */
+.ui-dialog .ui-dialog-content {
+    background: #1e1f22 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    position: relative !important;
+}
+
+.djs-subcircuit-modal {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.djs-subcircuit-paper-container {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #1e1f22;
+}
+
+/* Floating HUD Tools Overlay (top-right inside subwindow) */
+.djs-subwindow-tools {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    z-index: 100 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    padding: 3px !important;
+    background: rgba(30, 31, 34, 0.8) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.djs-subwindow-btn {
+    width: 26px !important;
+    height: 26px !important;
+    padding: 0 !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    background: transparent !important;
+    color: #dfe1e5 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: background 0.12s ease, color 0.12s ease !important;
+}
+
+.djs-subwindow-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+.djs-subwindow-btn:active {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
 

@@ -33,7 +33,8 @@ module.exports = {
         library: 'digital',
         libraryTarget: 'umd',
         umdNamedDefine: true,
-        globalObject: 'this'
+        globalObject: 'window',
+        publicPath: ''
     },
     entry: "./src/index.mjs",
     devtool: "source-map",

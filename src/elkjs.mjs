@@ -2,13 +2,14 @@
 import elkjs from 'elkjs/lib/elk.bundled.js';
 import { Clock, Input, Output } from "./cells/io.mjs";
 
-function to_elkjs(graph) {
+function to_elkjs(graph, options = {}) {
+    const spacing = options.zeroDistance ? 0.0 : 40.0;
     const elkGraph = {
         id: "root",
         properties: {
             algorithm: 'layered',
             'elk.edgeRouting': 'ORTHOGONAL',
-            'elk.layered.spacing.nodeNodeBetweenLayers': 40.0,
+            'elk.layered.spacing.nodeNodeBetweenLayers': spacing,
             'elk.layered.nodePlacement.favorStraightEdges': true,
         },
         children: [],
@@ -125,13 +126,14 @@ function from_elkjs(graph, elkGraph) {
     graph.stopBatch('layout');
 }
 
-export function elk_layout(graph) {
-    const elkGraph = to_elkjs(graph);
+export function elk_layout(graph, options = {}) {
+    const elkGraph = to_elkjs(graph, options);
 
     const elk = new elkjs();
 
-    elk.layout(elkGraph).then(g => {
+    return elk.layout(elkGraph).then(g => {
         from_elkjs(graph, g);
+        return g;
     });
 }
 

@@ -11,16 +11,16 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 1.4 Scrivere unit test per la trasformazione del netlist e l'accorpamento ricorsivo delle connessioni
 
 ### Task Group 2: Manual Compilation Flow & Hammer Button Styling
-- [ ] 2.1 Disabilitare l'auto-compilazione continua su digitazione nell'editor Verilog (`file.v`)
-- [ ] 2.2 Sostituire il vecchio pulsante di compilazione con la nuova icona a martello (*hammer*) nella toolbar principale
-- [ ] 2.3 Implementare l'indicatore di stato "Modificato" / dirty state quando il codice sorgente subisce modifiche non ancora sintetizzate
-- [ ] 2.4 Verificare che la sintesi Verilog avvenga esclusivamente su pressione esplicita del pulsante o combinazione rapida
+- [x] 2.1 Disabilitare l'auto-compilazione continua su digitazione nell'editor Verilog (`file.v`)
+- [x] 2.2 Sostituire il vecchio pulsante di compilazione con la nuova icona a martello (*hammer*) nella toolbar principale
+- [x] 2.3 Implementare l'indicatore di stato "Modificato" / dirty state quando il codice sorgente subisce modifiche non ancora sintetizzate
+- [x] 2.4 Verificare che la sintesi Verilog avvenga esclusivamente su pressione esplicita del pulsante o combinazione rapida
 
 ### Task Group 3: Subwindow Optimization & Modernization
-- [ ] 3.1 Riprogettare il layout della sottofinestra (subwindow di ispezione modulo), eliminando lo spazio bianco eccedente a favore di una card floating moderna e compatta
-- [ ] 3.2 Implementare header sottile e pulito con titolo del modulo e pulsante di chiusura "X" minimalista
-- [ ] 3.3 Garantire il calcolo ottimale del viewport interno (bounding box automatico) per evitare margini vuoti
-- [ ] 3.4 Preservare lo stato di simulazione e interazione del canvas principale durante l'apertura e chiusura della sottofinestra
+- [x] 3.1 Riprogettare il layout della sottofinestra (subwindow di ispezione modulo), eliminando lo spazio bianco eccedente a favore di una card floating moderna e compatta
+- [x] 3.2 Implementare header sottile e pulito con titolo del modulo e pulsante di chiusura "X" minimalista
+- [x] 3.3 Garantire il calcolo ottimale del viewport interno (bounding box automatico) per evitare margini vuoti
+- [x] 3.4 Preservare lo stato di simulazione e interazione del canvas principale durante l'apertura e chiusura della sottofinestra
 
 ### Task Group 4: Lens Bar (Zoom/Pan HUD) & Canvas Navigation
 - [ ] 4.1 Creare il componente floating Lens Bar (barra lente) posizionato in overlay in alto a destra nel canvas del circuito
