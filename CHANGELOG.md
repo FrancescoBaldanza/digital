@@ -2,6 +2,16 @@
 
 ## 2026-10-11
 
+- docs(phase-2): mark all validation criteria and definition of done items complete
+- fix(phase-2): harden security checks, sanitize synthesis script, add test-library.v benchmark
+- docs(phase-2): add teacher guide, complete test verification and prod build
+- feat(subcircuit): enhance IC inspection with double-click and preview navigation
+- feat(unibo): validate UniBo library components and multi-file synthesis
+- feat(libraries): implement LibraryRegistry, directory resolver and Verilog include integration
+- feat(module-api): implement OOP Module API, Shape hierarchy and validation
+- docs(specs): add phase 2 custom modules specifications
+- feat(phase-2): ordered project
+
 - chore: mark phase 1 validation criteria complete
 - chore: complete phase 1 roadmap checklist and spec updates
 - feat(phase-1): 3-column UI, manual compilation and JetBrains plugin packaging

@@ -21,17 +21,18 @@ Obiettivo: creare la base del progetto con struttura `specs/`, pulizia del codic
 ## Phase 2: Moduli Personalizzati
 Obiettivo: API OOP per definire moduli custom, sistema librerie (built-in + custom), libreria UniBo corretta.
 
-- [ ] Definire API OOP per moduli: classi Module, Input, Output, Shape
-- [ ] Implementare sistema librerie con supporto per librerie built-in e custom
-- [ ] Creare meccanismo di caricamento librerie da directory utente
-- [ ] Implementare libreria UniBo corretta con moduli validi
-- [ ] Supportare moduli multi-file con inclusione nel diagramma
-- [ ] Implementare navigazione tra moduli inclusi (possibilità di "sbirciare" nel diagramma)
-- [ ] Scrivere test per il sistema librerie e API moduli
-- [ ] Documentare l'API per i professori che creano librerie custom
+- [x] Definire API OOP per moduli: classi Module, Input, Output, Shape
+- [x] Implementare sistema librerie con supporto per librerie built-in e custom
+- [x] Creare meccanismo di caricamento librerie da directory utente
+- [x] Implementare libreria UniBo corretta con moduli validi
+- [x] Supportare moduli multi-file con inclusione nel diagramma
+- [x] Implementare navigazione tra moduli inclusi (possibilità di "sbirciare" nel diagramma)
+- [x] Scrivere test per il sistema librerie e API moduli
+- [x] Documentare l'API per i professori che creano librerie custom
 
 ## Phase 3: Miglioramenti UI
 Obiettivo: migliorare l'interfaccia utente con subwindow ottimizzata, gate rendering migliorato, barra lente e XOR ricorsivo.
+Guarda [appunti](../docs/notes/request/note.md).
 
 - [ ] Implementare subwindow ottimizzata e modernizzata per dettagli del modulo
 - [ ] Stilizzare il bottone Compile in modo coerente con il tono accademico
@@ -41,6 +42,7 @@ Obiettivo: migliorare l'interfaccia utente con subwindow ottimizzata, gate rende
 - [ ] Migliorare il layout automatico dei circuiti complessi
 - [ ] Assicurare che l'interfaccia rispetti il tono accademico & minimalista
 - [ ] Testare l'UI con circuiti complessi multi-modulo
+- [ ] Navigazione dell'area di lavoro tramite pan (trascinamento) e zoom (ingrandimento)
 
 ## Phase 4: Simulazione Avanzata
 Obiettivo: simulazione di metastati, alee (statiche e dinamiche), ritardi di propagazione e calcolo voltaggio.
