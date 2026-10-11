@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -34,7 +34,7 @@ if (!vFile) {
 }
 
 const yosysBin = process.env.YOSYS_PATH || findBinary('yosys', ['/opt/homebrew/bin', '/usr/local/bin']) || 'yosys';
-const tmpYosys = path.join('/tmp', 'yosys_synth_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8) + '.json');
+const tmpYosys = path.join(os.tmpdir(), 'yosys_synth_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8) + '.json');
 
 let tmpBundle = null;
 try {
@@ -46,7 +46,7 @@ try {
     const embeddedVerilog = (typeof __UNIBO_VERILOG_SOURCE__ !== 'undefined') ? __UNIBO_VERILOG_SOURCE__ : '';
 
     if (!fs.existsSync(uniboLib)) {
-        tmpBundle = path.join('/tmp', 'digital_unibo_modules.v');
+        tmpBundle = path.join(os.tmpdir(), 'digital_unibo_modules_' + Date.now() + '.v');
         if (embeddedVerilog) {
             fs.writeFileSync(tmpBundle, embeddedVerilog, 'utf8');
             uniboLib = tmpBundle;
@@ -61,40 +61,30 @@ try {
             resolvedLibDirs = defaultResolver.resolveIncludeDirectories([
                 path.dirname(vFile),
                 path.resolve(__dirname, '../libraries'),
-                path.resolve(__dirname, '../src/libraries')
+                path.resolve(__dirname, '../src/libraries'),
+                path.resolve(__dirname, '../src/libraries/unibo')
             ]);
         }
     } catch (_) {
-        // Fallback search directories
         resolvedLibDirs = [
             path.resolve(__dirname, '../src/libraries/unibo'),
+            path.resolve(__dirname, '../src/libraries'),
             path.resolve(__dirname, '../libraries')
         ];
     }
 
-    // Prepare unibo.v in the directory of vFile and common include paths
-    const uniboContent = fs.existsSync(uniboLib) ? fs.readFileSync(uniboLib, 'utf8') : embeddedVerilog;
     const targetDirs = new Set([
         path.dirname(vFile),
-        os.tmpdir(),
-        '/tmp',
-        '/private/tmp',
+        path.resolve(__dirname, '../src/libraries/unibo'),
         ...resolvedLibDirs
     ]);
     if (originalFilePath && fs.existsSync(originalFilePath)) {
         targetDirs.add(path.dirname(originalFilePath));
     }
-    for (const d of targetDirs) {
-        try {
-            if (fs.existsSync(d)) {
-                fs.writeFileSync(path.join(d, 'unibo.v'), uniboContent, 'utf8');
-            }
-        } catch (_) {}
-    }
 
     // Build include directory flags for Yosys
-    const includeDirs = Array.from(targetDirs).filter(d => fs.existsSync(d));
-    const incArgs = includeDirs.map(d => `-I"${d}"`).join(' ');
+    const includeDirs = Array.from(targetDirs).filter(d => fs.existsSync(d) && fs.statSync(d).isDirectory());
+    const incArgs = includeDirs.map(d => `-I${d}`).join(' ');
 
     let readSources = '';
     // If the file doesn't already have `include "unibo.v"`, read uniboLib first
@@ -104,8 +94,7 @@ try {
     readSources += `read_verilog "${vFile}";`;
 
     const yosysScript = `verilog_defaults -add -overwrite ${incArgs}; ${readSources} hierarchy -auto-top; proc; opt_clean; memory -nomap; wreduce -memx; opt_clean; write_json "${tmpYosys}"`;
-    const yosysCmd = `"${yosysBin}" -p '${yosysScript}'`;
-    execSync(yosysCmd, { stdio: 'pipe' });
+    execFileSync(yosysBin, ['-p', yosysScript], { stdio: 'pipe' });
 
     if (!fs.existsSync(tmpYosys)) {
         throw new Error('Yosys execution completed but no netlist output was generated.');

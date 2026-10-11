@@ -204,8 +204,8 @@ export class LibraryRegistry {
      */
     loadFromDirectory(dirPath) {
         const resolvedDir = path.isAbsolute(dirPath) ? dirPath : path.resolve(process.cwd(), dirPath);
-        if (!fs.existsSync(resolvedDir)) {
-            throw new Error(`Directory not found: '${resolvedDir}'`);
+        if (!fs.existsSync(resolvedDir) || !fs.statSync(resolvedDir).isDirectory()) {
+            throw new Error(`Directory not found or not a directory: '${resolvedDir}'`);
         }
 
         const manifestPath = path.join(resolvedDir, 'library.json');
@@ -217,12 +217,17 @@ export class LibraryRegistry {
                 throw new Error(`Failed to parse library.json in '${resolvedDir}': ${err.message}`);
             }
         }
+        manifest = (manifest && typeof manifest === 'object' && !Array.isArray(manifest)) ? manifest : {};
 
         const libName = manifest.name || path.basename(resolvedDir);
         let verilogBundle = '';
 
-        const verilogEntry = manifest.verilogEntry || 'modules.v';
-        const verilogFile = path.join(resolvedDir, verilogEntry);
+        const verilogEntry = (manifest.verilogEntry && typeof manifest.verilogEntry === 'string') ? manifest.verilogEntry : 'modules.v';
+        const verilogFile = path.resolve(resolvedDir, verilogEntry);
+        const relPath = path.relative(resolvedDir, verilogFile);
+        if (relPath.startsWith('..') || path.isAbsolute(verilogEntry)) {
+            throw new Error(`Security error: verilogEntry path '${verilogEntry}' escapes library directory '${resolvedDir}'`);
+        }
         if (fs.existsSync(verilogFile)) {
             verilogBundle = fs.readFileSync(verilogFile, 'utf8');
         }

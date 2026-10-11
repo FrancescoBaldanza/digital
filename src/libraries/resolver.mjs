@@ -112,16 +112,23 @@ export class LibraryResolver {
 
         if (fs.existsSync(manifestPath)) {
             try {
-                manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-                if (manifest.name) {
-                    name = manifest.name;
+                const parsed = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+                if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                    manifest = parsed;
+                    if (manifest.name) {
+                        name = manifest.name;
+                    }
                 }
             } catch (_) {}
         }
 
         let verilogFile = null;
-        if (manifest && manifest.verilogEntry && fs.existsSync(path.join(dirPath, manifest.verilogEntry))) {
-            verilogFile = path.join(dirPath, manifest.verilogEntry);
+        if (manifest && manifest.verilogEntry && typeof manifest.verilogEntry === 'string') {
+            const candidate = path.resolve(dirPath, manifest.verilogEntry);
+            const rel = path.relative(dirPath, candidate);
+            if (!rel.startsWith('..') && !path.isAbsolute(manifest.verilogEntry) && fs.existsSync(candidate)) {
+                verilogFile = candidate;
+            }
         } else if (fs.existsSync(modulesVPath)) {
             verilogFile = modulesVPath;
         } else if (fs.existsSync(uniboVPath)) {

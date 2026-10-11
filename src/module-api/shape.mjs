@@ -25,8 +25,8 @@ export class Shape {
 
         this.minWidth = Math.max(60, options.minWidth || 80);
         this.minHeight = Math.max(40, options.minHeight || 40);
-        this.pinPitch = options.pinPitch || 24;
-        this.horizontalPitch = options.horizontalPitch || 28;
+        this.pinPitch = Math.max(1, options.pinPitch || 24);
+        this.horizontalPitch = Math.max(1, options.horizontalPitch || 28);
     }
 
     /**

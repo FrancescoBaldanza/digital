@@ -134,6 +134,10 @@ export class Module {
                 continue;
             }
 
+            if (!standardIdentifier.test(port.name) && !escapedIdentifier.test(port.name)) {
+                errors.push(`Port '${port.name}' on module '${this.name}' is invalid. Must be an alphanumeric identifier or a valid Verilog escaped identifier.`);
+            }
+
             if (seenNames.has(port.name)) {
                 errors.push(`Module '${this.name}' has duplicate port name '${port.name}'.`);
             } else {
@@ -202,13 +206,16 @@ export class Module {
         const ports = [];
         for (const input of this.inputs) {
             const bus = input.bits > 1 ? `[${input.bits - 1}:0] ` : '';
-            ports.push(`    input wire ${bus}${input.name}`);
+            const portName = input.name.startsWith('\\') ? `${input.name} ` : input.name;
+            ports.push(`    input wire ${bus}${portName}`);
         }
         for (const output of this.outputs) {
             const bus = output.bits > 1 ? `[${output.bits - 1}:0] ` : '';
-            ports.push(`    output wire ${bus}${output.name}`);
+            const portName = output.name.startsWith('\\') ? `${output.name} ` : output.name;
+            ports.push(`    output wire ${bus}${portName}`);
         }
-        return `module ${this.name} (\n${ports.join(',\n')}\n);`;
+        const moduleName = this.name.startsWith('\\') ? `${this.name} ` : this.name;
+        return `module ${moduleName} (\n${ports.join(',\n')}\n);`;
     }
 }
 

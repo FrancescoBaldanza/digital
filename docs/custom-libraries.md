@@ -105,3 +105,18 @@ Il sistema include un `LibraryResolver` automatico:
 Nel canvas del circuito:
 1. I moduli della libreria appaiono come **circuiti integrati compatti (IC)**.
 2. Cliccando sull'icona della **lente (Lens Bar)** sopra il modulo o facendo **doppio-click** sul blocco, si apre una finestra popup/overlay interattiva che mostra la rete logica interna del modulo senza abbandonare il canvas principale.
+
+---
+
+## 6. Esempio Completo di Riferimento (`test-library.v`)
+
+Nella root del progetto è disponibile il circuito didattico [test-library.v](file:///Users/francescobaldanza/CLionProjects/digital/test-library.v) pronto all'uso come benchmark per studenti e docenti.
+Include una combinazione di:
+- `CounterEnRst` (sequenziale a 7 bit)
+- `ALU` (combinatorio aritmetico-logico a 8 bit con flag)
+- `FFD` e `\FF-D` (flip-flop D e gestione escaped identifiers)
+- `Decoder` (3-to-8)
+- `FullAdder` (sommatore completo 1 bit)
+- `Mux2` (multiplexer 2-a-1)
+
+Compilandolo nell'IDE o nel visualizzatore Web, ciascun blocco compare come IC interattivo ispezionabile tramite doppio-click o icona lente.
