@@ -23,10 +23,10 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 3.4 Scrivere test di integrazione per la corretta sintesi e istanziazione dei componenti UniBo
 
 ### Task Group 4: Subcircuit Hierarchy & IC Inspection ("Sbirciare")
-- [ ] 4.1 Definire il rendering visivo compatto dei moduli personalizzati come Integrated Circuit (IC box con pin layout e label)
-- [ ] 4.2 Implementare l'evento di interazione (click/doppio-click o pulsante "Inspect") sul blocco del modulo nel diagramma
-- [ ] 4.3 Creare il componente overlay/modal di anteprima per visualizzare lo schematico interno del sottomodulo senza abbandonare il canvas principale
-- [ ] 4.4 Verificare l'interazione grafica e il re-rendering dei circuiti annidati
+- [x] 4.1 Definire il rendering visivo compatto dei moduli personalizzati come Integrated Circuit (IC box con pin layout e label)
+- [x] 4.2 Implementare l'evento di interazione (click/doppio-click o pulsante "Inspect") sul blocco del modulo nel diagramma
+- [x] 4.3 Creare il componente overlay/modal di anteprima per visualizzare lo schematico interno del sottomodulo senza abbandonare il canvas principale
+- [x] 4.4 Verificare l'interazione grafica e il re-rendering dei circuiti annidati
 
 ### Task Group 5: Automated Verification & Documentation
 - [ ] 5.1 Redigere la guida documentale per i docenti (`docs/custom-libraries.md`) sull'uso dell'API OOP e packaging delle librerie

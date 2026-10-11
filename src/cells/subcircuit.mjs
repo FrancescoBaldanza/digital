@@ -164,7 +164,13 @@ export const SubcircuitView = BoxView.extend({
         "click foreignObject.tooltip": "stopprop",
         "mousedown foreignObject.tooltip": "stopprop",
         "touchstart foreignObject.tooltip": "stopprop", // make sure the input receives focus
-        "click a.zoom": "zoomInCircuit"
+        "click a.zoom": "zoomInCircuit",
+        "dblclick": "onDoubleClick"
+    },
+    onDoubleClick(evt) {
+        if (evt) evt.stopPropagation();
+        this.paper.trigger('open:subcircuit', this.model);
+        return false;
     },
     zoomInCircuit(evt) {
         evt.stopPropagation();
