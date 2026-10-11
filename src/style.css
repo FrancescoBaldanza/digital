@@ -613,6 +613,11 @@ table.memeditor input.iswrite.isread {
     align-items: center !important;
     justify-content: center !important;
     color: #868a98 !important;
+    text-indent: 0 !important;
+    overflow: visible !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
     transition: background 0.15s ease, color 0.15s ease !important;
 }
 
@@ -622,16 +627,24 @@ table.memeditor input.iswrite.isread {
 }
 
 .ui-dialog .ui-dialog-titlebar-close .ui-icon,
-.ui-dialog .ui-dialog-titlebar-close .ui-button-icon {
+.ui-dialog .ui-dialog-titlebar-close .ui-button-icon,
+.ui-dialog .ui-dialog-titlebar-close .ui-button-icon-space {
     display: none !important;
 }
 
-.ui-dialog .ui-dialog-titlebar-close::after {
+.ui-dialog .ui-dialog-titlebar-close svg {
+    display: block !important;
+    pointer-events: none !important;
+    stroke: currentColor !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close:empty::after {
     content: "✕" !important;
     font-size: 13px !important;
     font-family: inherit !important;
     line-height: 1 !important;
     display: block !important;
+    color: currentColor !important;
 }
 
 /* Subcircuit Modal Body */

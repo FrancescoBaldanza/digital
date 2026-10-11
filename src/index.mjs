@@ -156,6 +156,29 @@ export class Circuit extends HeadlessCircuit {
                 </svg>
             `);
         }
+
+        // Customize close button with clean visible vector "X"
+        const closeBtn = titlebar.find('.ui-dialog-titlebar-close');
+        if (closeBtn.length) {
+            closeBtn.attr('title', 'Close (Esc)');
+            closeBtn.empty().append(`
+                <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                    <line x1="3" y1="3" x2="13" y2="13"></line>
+                    <line x1="13" y1="3" x2="3" y2="13"></line>
+                </svg>
+            `);
+            closeBtn.on('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dialog.dialog('close');
+            });
+        }
+
+        dialog.closest('.ui-dialog').on('keydown', (e) => {
+            if (e.key === 'Escape') {
+                dialog.dialog('close');
+            }
+        });
     }
     displayOn(elem) {
         return this._makePaper(elem, this._graph);
@@ -212,6 +235,65 @@ export class Circuit extends HeadlessCircuit {
             paper.fitToContent({ padding: 16, allowNewOrigin: 'any' });
         });
         paper.unfreeze();
+
+        // Universal smooth mouse drag panning on blank canvas
+        let isPanning = false;
+        let startClientX = 0, startClientY = 0;
+        let initialOrigin = { tx: 0, ty: 0 };
+        const onBlankPointerDown = (evt) => {
+            isPanning = true;
+            startClientX = evt.clientX;
+            startClientY = evt.clientY;
+            initialOrigin = paper.translate();
+            $('body').css('cursor', 'grab');
+        };
+        const onMouseMove = (evt) => {
+            if (!isPanning) return;
+            const dx = evt.clientX - startClientX;
+            const dy = evt.clientY - startClientY;
+            paper.translate(initialOrigin.tx + dx, initialOrigin.ty + dy);
+        };
+        const onMouseUp = () => {
+            if (isPanning) {
+                isPanning = false;
+                $('body').css('cursor', '');
+            }
+        };
+
+        paper.on('blank:pointerdown', onBlankPointerDown);
+        $(window).on('mousemove', onMouseMove);
+        $(window).on('mouseup', onMouseUp);
+
+        // Universal smooth mouse wheel zoom centered at cursor
+        const $elem = $(elem);
+        const onPaperWheel = (evt) => {
+            const origEvt = evt.originalEvent || evt;
+            origEvt.preventDefault();
+            const delta = origEvt.deltaY;
+            const currentScale = paper.scale();
+            const sx = currentScale.sx || 1.0;
+            const factor = delta < 0 ? 1.15 : (1 / 1.15);
+            const newScale = Math.min(Math.max(sx * factor, 0.15), 5.0);
+
+            const offset = $elem.offset() || { left: 0, top: 0 };
+            const clientX = origEvt.clientX - offset.left;
+            const clientY = origEvt.clientY - offset.top;
+            const origin = paper.translate();
+            const newTx = clientX - (clientX - origin.tx) * (newScale / sx);
+            const newTy = clientY - (clientY - origin.ty) * (newScale / sx);
+
+            paper.scale(newScale, newScale);
+            paper.translate(newTx, newTy);
+        };
+        $elem.on('wheel', onPaperWheel);
+
+        paper.once('remove', () => {
+            paper.off('blank:pointerdown', onBlankPointerDown);
+            $(window).off('mousemove', onMouseMove);
+            $(window).off('mouseup', onMouseUp);
+            $elem.off('wheel', onPaperWheel);
+        });
+
         // subcircuit display
         const circuit = this;
         this.listenTo(paper, 'open:subcircuit', (model) => {
@@ -270,35 +352,6 @@ export class Circuit extends HeadlessCircuit {
                 }
             });
 
-            // Smooth mouse drag panning inside subcircuit modal
-            let isPanning = false;
-            let startClientX = 0, startClientY = 0;
-            let initialOrigin = { tx: 0, ty: 0 };
-            const onBlankPointerDown = (evt) => {
-                isPanning = true;
-                startClientX = evt.clientX;
-                startClientY = evt.clientY;
-                initialOrigin = subPaper.translate();
-            };
-            const onMouseMove = (evt) => {
-                if (!isPanning) return;
-                const dx = evt.clientX - startClientX;
-                const dy = evt.clientY - startClientY;
-                subPaper.translate(initialOrigin.tx + dx, initialOrigin.ty + dy);
-            };
-            const onMouseUp = () => {
-                isPanning = false;
-            };
-
-            subPaper.on('blank:pointerdown', onBlankPointerDown);
-            $(window).on('mousemove', onMouseMove);
-            $(window).on('mouseup', onMouseUp);
-
-            subcircuitModal.on('dialogclose', () => {
-                subPaper.off('blank:pointerdown', onBlankPointerDown);
-                $(window).off('mousemove', onMouseMove);
-                $(window).off('mouseup', onMouseUp);
-            });
         });
         this.listenTo(paper, 'open:memorycontent', (subcircuitModal, closeCallback) => {
             this._windowCallback('Memory', subcircuitModal, closeCallback);

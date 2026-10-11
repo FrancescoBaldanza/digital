@@ -2,6 +2,7 @@
 
 ## 2026-10-11
 
+- fix(ui): enable universal smooth drag pan and wheel zoom on main canvas, restore visible 'x' vector close button in subcircuit modal
 - fix(jcef): resolve __dirname and path.isAbsolute crashes with path-utils and ensure thread safety
 - feat(phase-3): implement manual compilation flow, hammer icon, subwindow modernization, and HUD zoom/pan
 - feat(phase-3): implement recursive gate merging, zero-distance layout and synthesis pipeline

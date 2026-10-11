@@ -1458,24 +1458,46 @@ endmodule`,
 
   function zoomIn() {
     if (paper) {
-      zoomLevel = Math.min(zoomLevel * 1.25, 5.0);
-      paper.scale(zoomLevel);
+      const currentScale = paper.scale();
+      const sx = currentScale.sx || zoomLevel;
+      const newZoom = Math.min(sx * 1.25, 5.0);
+      const container = document.getElementById('paper-container');
+      const cx = (container ? container.clientWidth : window.innerWidth) / 2;
+      const cy = (container ? container.clientHeight : window.innerHeight) / 2;
+      const origin = paper.translate();
+      const newTx = cx - (cx - origin.tx) * (newZoom / sx);
+      const newTy = cy - (cy - origin.ty) * (newZoom / sx);
+      zoomLevel = newZoom;
+      paper.scale(zoomLevel, zoomLevel);
+      paper.translate(newTx, newTy);
     }
   }
 
   function zoomOut() {
     if (paper) {
-      zoomLevel = Math.max(zoomLevel / 1.25, 0.2);
-      paper.scale(zoomLevel);
+      const currentScale = paper.scale();
+      const sx = currentScale.sx || zoomLevel;
+      const newZoom = Math.max(sx / 1.25, 0.15);
+      const container = document.getElementById('paper-container');
+      const cx = (container ? container.clientWidth : window.innerWidth) / 2;
+      const cy = (container ? container.clientHeight : window.innerHeight) / 2;
+      const origin = paper.translate();
+      const newTx = cx - (cx - origin.tx) * (newZoom / sx);
+      const newTy = cy - (cy - origin.ty) * (newZoom / sx);
+      zoomLevel = newZoom;
+      paper.scale(zoomLevel, zoomLevel);
+      paper.translate(newTx, newTy);
     }
   }
 
   function fitView() {
     if (paper && circuit) {
       zoomLevel = 1.0;
-      paper.scale(1.0);
+      paper.scale(1.0, 1.0);
       try {
         paper.fitToContent({ padding: 30, allowNewOrigin: 'any' });
+        const scale = paper.scale();
+        zoomLevel = scale.sx || 1.0;
       } catch(_) {}
     }
   }
