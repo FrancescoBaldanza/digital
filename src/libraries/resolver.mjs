@@ -1,7 +1,7 @@
 "use strict";
 
 import fs from 'fs';
-import path from 'path';
+import path from './path-utils.mjs';
 
 /**
  * Normalizes and checks if a path is a valid directory.
@@ -27,14 +27,15 @@ export class LibraryResolver {
      * @param {string} [options.cwd=process.cwd()] - Current working root
      */
     constructor(options = {}) {
-        this.cwd = options.cwd || (typeof process !== 'undefined' ? process.cwd() : '.');
+        this.cwd = options.cwd || (typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '.');
         this.searchPaths = new Set();
 
+        const currentDir = typeof __dirname !== 'undefined' ? __dirname : '.';
         const initialPaths = options.searchPaths || [
             './libraries',
             './src/libraries',
-            path.resolve(__dirname, '..'), // src/libraries
-            path.resolve(__dirname, '../../libraries')
+            path && typeof path.resolve === 'function' ? path.resolve(currentDir, '..') : '..',
+            path && typeof path.resolve === 'function' ? path.resolve(currentDir, '../../libraries') : '../../libraries'
         ];
 
         for (const p of initialPaths) {

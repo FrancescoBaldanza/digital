@@ -1,7 +1,7 @@
 "use strict";
 
 import fs from 'fs';
-import path from 'path';
+import path from '../path-utils.mjs';
 import { fileURLToPath } from 'url';
 
 import { Library, registry } from '../registry.mjs';
@@ -10,10 +10,12 @@ import { Module, Input, Output, Side } from '../../module-api/index.mjs';
 // Resolve Verilog definitions bundle for synthesis if running under Node.js
 let verilogBundle = '';
 try {
-    const currentDir = path.dirname(fileURLToPath(import.meta.url));
-    const verilogPath = path.join(currentDir, 'modules.v');
-    if (typeof fs.readFileSync === 'function' && fs.existsSync(verilogPath)) {
-        verilogBundle = fs.readFileSync(verilogPath, 'utf8');
+    if (typeof fileURLToPath === 'function' && fs && typeof fs.readFileSync === 'function' && typeof fs.existsSync === 'function') {
+        const currentDir = path.dirname(fileURLToPath(import.meta.url));
+        const verilogPath = path.join(currentDir, 'modules.v');
+        if (fs.existsSync(verilogPath)) {
+            verilogBundle = fs.readFileSync(verilogPath, 'utf8');
+        }
     }
 } catch (_) {}
 

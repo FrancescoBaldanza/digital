@@ -3,6 +3,7 @@ package com.digital.plugin.editor;
 import com.digital.plugin.synthesis.DigitalSynthesizer;
 import com.digital.plugin.util.WebResourcesManager;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import java.util.Base64;
 
 public class DigitalPreviewEditor extends UserDataHolderBase implements FileEditor {
+    private static final Logger LOG = Logger.getInstance(DigitalPreviewEditor.class);
     private final Project project;
     private final VirtualFile file;
     private final JPanel mainPanel;
@@ -46,6 +48,8 @@ public class DigitalPreviewEditor extends UserDataHolderBase implements FileEdit
         this.project = project;
         this.file = file;
 
+        LOG.info("DigitalPreviewEditor constructor for file: " + file.getPath());
+
         this.browser = new JBCefBrowser();
         this.mainPanel = new JPanel(new BorderLayout());
         this.mainPanel.setFocusable(true);
@@ -53,6 +57,7 @@ public class DigitalPreviewEditor extends UserDataHolderBase implements FileEdit
 
         compileQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
         compileQuery.addHandler(request -> {
+            LOG.info("compileQuery received: " + request);
             if ("compile".equals(request)) {
                 if (onCompileRequested != null) {
                     ApplicationManager.getApplication().invokeLater(onCompileRequested);
@@ -64,12 +69,15 @@ public class DigitalPreviewEditor extends UserDataHolderBase implements FileEdit
         browser.getJBCefClient().addLoadHandler(new CefLoadHandlerAdapter() {
             @Override
             public void onLoadEnd(CefBrowser b, CefFrame frame, int httpStatusCode) {
+                LOG.info("DigitalPreviewEditor onLoadEnd fired, httpStatusCode=" + httpStatusCode + ", isMain=" + frame.isMain());
                 isPageLoaded = true;
                 executeJs("window.triggerCompileNative = function() { " + compileQuery.inject("\"compile\"") + " };");
                 if (pendingBase64Circuit != null) {
+                    LOG.info("Executing pending loadCircuitFromBase64 in JCEF");
                     executeJs("window.loadCircuitFromBase64('" + pendingBase64Circuit + "');");
                     pendingBase64Circuit = null;
                 } else if (pendingBase64Error != null) {
+                    LOG.info("Executing pending showErrorFromBase64 in JCEF");
                     executeJs("window.showErrorFromBase64('" + pendingBase64Error + "');");
                     pendingBase64Error = null;
                 }
@@ -79,8 +87,10 @@ public class DigitalPreviewEditor extends UserDataHolderBase implements FileEdit
         try {
             Path webDir = WebResourcesManager.getWebDir();
             File indexFile = webDir.resolve("index.html").toFile();
+            LOG.info("Loading index.html from: " + indexFile.getAbsolutePath());
             browser.loadURL(indexFile.toURI().toURL().toString());
         } catch (Exception e) {
+            LOG.error("Failed to load web resources", e);
             browser.loadHTML("<html><body><h3>Failed to load Digital preview resources: " + e.getMessage() + "</h3></body></html>");
         }
     }
@@ -92,26 +102,32 @@ public class DigitalPreviewEditor extends UserDataHolderBase implements FileEdit
     }
 
     public void synthesizeAndRender(String verilogSource, String filePath) {
+        LOG.info("DigitalPreviewEditor.synthesizeAndRender called, isPageLoaded=" + isPageLoaded + ", filePath=" + filePath);
         if (isPageLoaded) {
             executeJs("if (window.setDirty) { window.setDirty(false); } window.setSynthesizing();");
         }
 
         DigitalSynthesizer.SynthesisResult result = DigitalSynthesizer.synthesize(verilogSource, filePath);
+        LOG.info("Synthesis finished, isSuccess=" + result.isSuccess + ", payload length=" + (result.payload != null ? result.payload.length() : 0));
 
         ApplicationManager.getApplication().invokeLater(() -> {
             if (result.isSuccess) {
                 String b64 = Base64.getEncoder().encodeToString(result.payload.getBytes(StandardCharsets.UTF_8));
                 if (!isPageLoaded) {
+                    LOG.info("Page not loaded yet, storing pendingBase64Circuit");
                     pendingBase64Circuit = b64;
                     pendingBase64Error = null;
                 } else {
+                    LOG.info("Executing loadCircuitFromBase64 in JCEF");
                     executeJs("window.loadCircuitFromBase64('" + b64 + "');");
                 }
             } else {
                 String b64 = Base64.getEncoder().encodeToString(result.payload.getBytes(StandardCharsets.UTF_8));
                 if (!isPageLoaded) {
+                    LOG.info("Page not loaded yet, storing pendingBase64Error");
                     pendingBase64Error = b64;
                 } else {
+                    LOG.info("Executing showErrorFromBase64 in JCEF");
                     executeJs("window.showErrorFromBase64('" + b64 + "');");
                 }
             }

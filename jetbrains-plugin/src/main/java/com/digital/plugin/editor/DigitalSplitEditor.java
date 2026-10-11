@@ -1,6 +1,7 @@
 package com.digital.plugin.editor;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class DigitalSplitEditor extends TextEditorWithPreview {
+    private static final Logger LOG = Logger.getInstance(DigitalSplitEditor.class);
     private final Alarm alarm;
     private final DigitalPreviewEditor previewEditor;
 
@@ -21,6 +23,8 @@ public class DigitalSplitEditor extends TextEditorWithPreview {
         super(editor, preview, "Digital Preview", Layout.SHOW_EDITOR_AND_PREVIEW);
         this.previewEditor = preview;
         this.alarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
+
+        LOG.info("DigitalSplitEditor instantiated for file: " + (preview.getFile() != null ? preview.getFile().getPath() : "unknown"));
 
         // Connect manual compile callback from webview Compile button
         preview.setOnCompileRequested(this::compile);
@@ -39,6 +43,7 @@ public class DigitalSplitEditor extends TextEditorWithPreview {
     }
 
     public void compile() {
+        LOG.info("DigitalSplitEditor.compile() triggered");
         previewEditor.setDirty(false);
         ApplicationManager.getApplication().invokeLater(() -> {
             String code = ApplicationManager.getApplication().runReadAction((com.intellij.openapi.util.Computable<String>) () -> {
@@ -50,6 +55,7 @@ public class DigitalSplitEditor extends TextEditorWithPreview {
                 vFile = getFile();
             }
             String path = vFile != null ? vFile.getPath() : null;
+            LOG.info("DigitalSplitEditor.compile() extracted code length: " + (code != null ? code.length() : 0) + ", path: " + path);
 
             alarm.cancelAllRequests();
             alarm.addRequest(() -> {

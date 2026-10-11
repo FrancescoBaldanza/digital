@@ -1,7 +1,7 @@
 "use strict";
 
 import fs from 'fs';
-import path from 'path';
+import path from './path-utils.mjs';
 import { Module } from '../module-api/module.mjs';
 import { defaultResolver, LibraryResolver } from './resolver.mjs';
 
@@ -203,7 +203,8 @@ export class LibraryRegistry {
      * @returns {Library}
      */
     loadFromDirectory(dirPath) {
-        const resolvedDir = path.isAbsolute(dirPath) ? dirPath : path.resolve(process.cwd(), dirPath);
+        const cwd = (typeof process !== 'undefined' && typeof process.cwd === 'function') ? process.cwd() : '.';
+        const resolvedDir = (path && typeof path.isAbsolute === 'function' && path.isAbsolute(dirPath)) ? dirPath : (path && typeof path.resolve === 'function' ? path.resolve(cwd, dirPath) : dirPath);
         if (!fs.existsSync(resolvedDir) || !fs.statSync(resolvedDir).isDirectory()) {
             throw new Error(`Directory not found or not a directory: '${resolvedDir}'`);
         }
