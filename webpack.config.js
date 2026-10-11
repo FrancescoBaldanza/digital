@@ -37,6 +37,14 @@ module.exports = {
     },
     entry: "./src/index.mjs",
     devtool: "source-map",
+    resolve: {
+        fallback: {
+            "fs": false,
+            "path": false,
+            "os": false,
+            "url": false
+        }
+    },
     module: {
         rules: [
             {

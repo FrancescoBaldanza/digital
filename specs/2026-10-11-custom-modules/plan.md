@@ -29,7 +29,7 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 4.4 Verificare l'interazione grafica e il re-rendering dei circuiti annidati
 
 ### Task Group 5: Automated Verification & Documentation
-- [ ] 5.1 Redigere la guida documentale per i docenti (`docs/custom-libraries.md`) sull'uso dell'API OOP e packaging delle librerie
-- [ ] 5.2 Eseguire l'intera suite di test con `npm test` garantendo 0 fallimenti e copertura dei nuovi moduli
-- [ ] 5.3 Eseguire la build completa (`npm run build-lib` e `npm run prod`)
-- [ ] 5.4 Eseguire walkthrough manuale su circuiti demo multi-modulo con ispezione gerarchica
+- [x] 5.1 Redigere la guida documentale per i docenti (`docs/custom-libraries.md`) sull'uso dell'API OOP e packaging delle librerie
+- [x] 5.2 Eseguire l'intera suite di test con `npm test` garantendo 0 fallimenti e copertura dei nuovi moduli
+- [x] 5.3 Eseguire la build completa (`npm run build-lib` e `npm run prod`)
+- [x] 5.4 Eseguire walkthrough manuale su circuiti demo multi-modulo con ispezione gerarchica
