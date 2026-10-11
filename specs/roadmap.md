@@ -1,4 +1,4 @@
-# Project Roadmap: digitaljs
+# Project Roadmap: Digital
 
 High-level implementation order split into small, independently testable phases.
 Each phase contains an atomic checklist of deliverables.

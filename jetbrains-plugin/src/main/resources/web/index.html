@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DigitalJS - Verilog Simulator</title>
+  <title>Digital - Verilog Simulator</title>
   <script defer src="./main.js"></script>
   <style>
     :root {
@@ -570,8 +570,8 @@
   <!-- COLUMN 1: File Explorer -->
   <aside id="sidebar-explorer">
     <div class="sidebar-header">
-      <img src="./digitaljs_icon.svg" class="app-icon-img" alt="DigitalJS" />
-      <span class="app-title">DigitalJS</span>
+      <img src="./digital_icon.svg" class="app-icon-img" alt="Digital" />
+      <span class="app-title">Digital</span>
       <span class="app-badge">Verilog</span>
     </div>
     <div class="explorer-section-title">Project Samples</div>
@@ -750,7 +750,7 @@
           <path d="M8 8h8v8H8z" stroke-width="1.2"/>
           <path d="M8 1v3M16 1v3M8 20v3M16 20v3M1 8h3M1 16h3M20 8h3M20 16h3"/>
         </svg>
-        <div class="empty-title">DigitalJS Circuit Simulation</div>
+        <div class="empty-title">Digital Circuit Simulation</div>
         <div class="empty-subtitle">Write Verilog code and click Compile to visualize the synthesized circuit</div>
       </div>
       <div id="paper"></div>
@@ -1252,15 +1252,15 @@ endmodule`,
     const emptyState = document.getElementById('empty-state');
     if (emptyState) emptyState.style.display = 'none';
 
-    if (!window.digitaljs || !window.digitaljs.Circuit) {
-      console.warn('DigitalJS runtime is loading...');
+    if (!window.digital || !window.digital.Circuit) {
+      console.warn('Digital runtime is loading...');
       setStatus('Loading runtime...', 'loading');
       setTimeout(() => loadCircuit(json), 150);
       return;
     }
 
     try {
-      circuit = new window.digitaljs.Circuit(json, { layoutEngine: "elkjs" });
+      circuit = new window.digital.Circuit(json, { layoutEngine: "elkjs" });
       paper = circuit.displayOn($('#paper'));
 
       const isFixed = document.getElementById('chk-fixed').checked;
@@ -1275,7 +1275,7 @@ endmodule`,
       circuit.start();
       updatePlayState();
     } catch (e) {
-      console.error('Error instantiating DigitalJS Circuit:', e);
+      console.error('Error instantiating Digital Circuit:', e);
       showError('Render Error: ' + e.message);
     }
   }

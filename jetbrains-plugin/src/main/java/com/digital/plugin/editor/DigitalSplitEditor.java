@@ -1,4 +1,4 @@
-package com.digitaljs.plugin.editor;
+package com.digital.plugin.editor;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class DigitalJsSplitEditor extends TextEditorWithPreview {
+public class DigitalSplitEditor extends TextEditorWithPreview {
     private final Alarm alarm;
-    private final DigitalJsPreviewEditor previewEditor;
+    private final DigitalPreviewEditor previewEditor;
 
-    public DigitalJsSplitEditor(@NotNull TextEditor editor,
-                                @NotNull DigitalJsPreviewEditor preview) {
-        super(editor, preview, "DigitalJS Preview", Layout.SHOW_EDITOR_AND_PREVIEW);
+    public DigitalSplitEditor(@NotNull TextEditor editor,
+                                @NotNull DigitalPreviewEditor preview) {
+        super(editor, preview, "Digital Preview", Layout.SHOW_EDITOR_AND_PREVIEW);
         this.previewEditor = preview;
         this.alarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
 

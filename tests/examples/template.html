@@ -33,16 +33,16 @@
             Object.values(papers).forEach(p => p.fixed(fixed));
           }
           const loadCircuit = function (json) {
-            circuit = new digitaljs.Circuit(json);
-            monitor = new digitaljs.Monitor(circuit);
-            monitorview = new digitaljs.MonitorView({model: monitor, el: $('#monitor') });
-            iopanel = new digitaljs.IOPanelView({model: circuit, el: $('#iopanel') });
+            circuit = new digital.Circuit(json);
+            monitor = new digital.Monitor(circuit);
+            monitorview = new digital.MonitorView({model: monitor, el: $('#monitor') });
+            iopanel = new digital.IOPanelView({model: circuit, el: $('#iopanel') });
             circuit.on('new:paper', function(paper) {
               paper.fixed($('input[name=fixed]').prop('checked'));
               papers[paper.cid] = paper;
               paper.on('element:pointerdblclick', (cellView) => {
-                window.digitaljsCell = cellView.model;
-                console.info('You can now access the doubly clicked gate as digitaljsCell in your WebBrowser console!');
+                window.digitalCell = cellView.model;
+                console.info('You can now access the doubly clicked gate as digitalCell in your WebBrowser console!');
               });
             });
             circuit.on('changeRunning', () => {

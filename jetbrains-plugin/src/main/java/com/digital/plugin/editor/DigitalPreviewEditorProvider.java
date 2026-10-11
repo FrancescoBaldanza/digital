@@ -1,4 +1,4 @@
-package com.digitaljs.plugin.editor;
+package com.digital.plugin.editor;
 
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-public class DigitalJsPreviewEditorProvider implements FileEditorProvider, DumbAware {
+public class DigitalPreviewEditorProvider implements FileEditorProvider, DumbAware {
     public static final String EDITOR_TYPE_ID = "digitaljs-preview-editor";
 
     @Override
@@ -19,7 +19,7 @@ public class DigitalJsPreviewEditorProvider implements FileEditorProvider, DumbA
 
     @Override
     public @NotNull FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        return new DigitalJsPreviewEditor(project, file);
+        return new DigitalPreviewEditor(project, file);
     }
 
     @Override

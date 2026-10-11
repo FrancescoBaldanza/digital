@@ -10,7 +10,7 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 1.3 Audit files in `review/`, document the purpose of each item, and clean up obsolete or redundant files
 - [x] 1.4 Consolidate `examples/` into `tests/` so that `tests/` is the single canonical folder for fixtures, test circuits, and demos
 - [x] 1.5 Generate and integrate a modern vector project icon representing digital logic circuits
-- [ ] 1.6 sostituisci tutte le parti di codice e nomi nel progetto che chiamano l'applicazione `DigitalJS` con `Digital`
+- [x] 1.6 sostituisci tutte le parti di codice e nomi nel progetto che chiamano l'applicazione `DigitalJS` con `Digital`
 
 ### Task Group 2: Core Synthesis & Compilation Flow
 - [x] 2.1 Verify and configure `yosys2digitaljs` synthesis pipeline for manual Verilog-to-circuit conversion

@@ -1,6 +1,6 @@
-# DigitalJS Verilog Preview Plugin for JetBrains IDEs
+# Digital Verilog Preview Plugin for JetBrains IDEs
 
-Plugin JetBrains per l'anteprima interattiva in tempo reale di codice Verilog (`.v`, `.sv`) basata su **DigitalJS** e **Yosys**, con layout split-editor in stile Markdown.
+Plugin JetBrains per l'anteprima interattiva in tempo reale di codice Verilog (`.v`, `.sv`) basata su **Digital** e **Yosys**, con layout split-editor in stile Markdown.
 
 ---
 
@@ -26,13 +26,13 @@ Plugin JetBrains per l'anteprima interattiva in tempo reale di codice Verilog (`
 ## Installazione e Test Rapido
 
 ### 1. Build & Installazione Automatica
-Dal terminale nella root del repository `digitaljs`:
+Dal terminale nella root del repository `digital`:
 ```bash
 npm run build-plugin
 ```
 Questo comando compila il plugin e lo copia automaticamente nella cartella plugin delle installazioni locali di **WebStorm 2026.2** e **CLion 2026.2**:
-*   `~/Library/Application Support/JetBrains/WebStorm2026.2/plugins/digitaljs-preview`
-*   `~/Library/Application Support/JetBrains/CLion2026.2/plugins/digitaljs-preview`
+*   `~/Library/Application Support/JetBrains/WebStorm2026.2/plugins/digital-preview`
+*   `~/Library/Application Support/JetBrains/CLion2026.2/plugins/digital-preview`
 
 ### 2. Test in WebStorm o CLion
 1. Riavvia WebStorm (o fai *File -> Invalidate Caches / Restart*).

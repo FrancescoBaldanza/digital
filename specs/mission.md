@@ -1,4 +1,4 @@
-# Project Mission: digitaljs
+# Project Mission: Digital
 
 ## Vision
 Un tool open-source per scrivere, visualizzare e simulare reti logiche tramite Verilog, pensato per studenti universitari che studiano reti logiche e per professori che vogliono adottarlo come strumento didattico moderno.

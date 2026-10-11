@@ -30,7 +30,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, outputDirectory),
         filename: 'main.js',
-        library: 'digitaljs',
+        library: 'digital',
         libraryTarget: 'umd',
         umdNamedDefine: true,
         globalObject: 'this'
@@ -62,7 +62,7 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            title: 'DigitalJS - Verilog Simulator',
+            title: 'Digital - Verilog Simulator',
             template: 'jetbrains-plugin/src/main/resources/web/index.html',
             filename: 'index.html',
             inject: false

@@ -1,4 +1,4 @@
-# Tech Stack & Architectural Guidelines: digitaljs
+# Tech Stack & Architectural Guidelines: Digital
 
 ## Core Technologies
 - **Runtime & Language:** JavaScript (ES modules in `src/`, CommonJS build in `lib/`), Node.js

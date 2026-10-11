@@ -1,7 +1,7 @@
-package com.digitaljs.plugin.editor;
+package com.digital.plugin.editor;
 
-import com.digitaljs.plugin.synthesis.DigitalJsSynthesizer;
-import com.digitaljs.plugin.util.WebResourcesManager;
+import com.digital.plugin.synthesis.DigitalSynthesizer;
+import com.digital.plugin.util.WebResourcesManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Base64;
 
-public class DigitalJsPreviewEditor extends UserDataHolderBase implements FileEditor {
+public class DigitalPreviewEditor extends UserDataHolderBase implements FileEditor {
     private final Project project;
     private final VirtualFile file;
     private final JPanel mainPanel;
@@ -42,7 +42,7 @@ public class DigitalJsPreviewEditor extends UserDataHolderBase implements FileEd
         this.onCompileRequested = onCompileRequested;
     }
 
-    public DigitalJsPreviewEditor(@NotNull Project project, @NotNull VirtualFile file) {
+    public DigitalPreviewEditor(@NotNull Project project, @NotNull VirtualFile file) {
         this.project = project;
         this.file = file;
 
@@ -81,7 +81,7 @@ public class DigitalJsPreviewEditor extends UserDataHolderBase implements FileEd
             File indexFile = webDir.resolve("index.html").toFile();
             browser.loadURL(indexFile.toURI().toURL().toString());
         } catch (Exception e) {
-            browser.loadHTML("<html><body><h3>Failed to load DigitalJS preview resources: " + e.getMessage() + "</h3></body></html>");
+            browser.loadHTML("<html><body><h3>Failed to load Digital preview resources: " + e.getMessage() + "</h3></body></html>");
         }
     }
 
@@ -90,7 +90,7 @@ public class DigitalJsPreviewEditor extends UserDataHolderBase implements FileEd
             executeJs("window.setSynthesizing();");
         }
 
-        DigitalJsSynthesizer.SynthesisResult result = DigitalJsSynthesizer.synthesize(verilogSource, filePath);
+        DigitalSynthesizer.SynthesisResult result = DigitalSynthesizer.synthesize(verilogSource, filePath);
 
         ApplicationManager.getApplication().invokeLater(() -> {
             if (result.isSuccess) {
@@ -133,7 +133,7 @@ public class DigitalJsPreviewEditor extends UserDataHolderBase implements FileEd
 
     @Override
     public @NotNull String getName() {
-        return "DigitalJS Circuit Preview";
+        return "Digital Circuit Preview";
     }
 
     @Override

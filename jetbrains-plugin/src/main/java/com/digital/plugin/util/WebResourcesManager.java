@@ -1,4 +1,4 @@
-package com.digitaljs.plugin.util;
+package com.digital.plugin.util;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -51,8 +51,8 @@ public class WebResourcesManager {
             cachedWebDir = targetDir;
             return cachedWebDir;
         } catch (Exception e) {
-            LOG.error("Failed to extract DigitalJS web resources", e);
-            throw new RuntimeException("Could not initialize DigitalJS preview resources: " + e.getMessage(), e);
+            LOG.error("Failed to extract Digital web resources", e);
+            throw new RuntimeException("Could not initialize Digital preview resources: " + e.getMessage(), e);
         }
     }
 }

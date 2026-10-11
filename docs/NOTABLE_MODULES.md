@@ -1,4 +1,4 @@
-# DigitalJS Notable Modules Reference
+# Digital Notable Modules Reference
 
 Concise technical specification and parameter reference for all built-in notable modules with strict type safety and `#F58A3C` visual styling.
 

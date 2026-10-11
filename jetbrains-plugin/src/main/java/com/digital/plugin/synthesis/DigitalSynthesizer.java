@@ -1,6 +1,6 @@
-package com.digitaljs.plugin.synthesis;
+package com.digital.plugin.synthesis;
 
-import com.digitaljs.plugin.util.WebResourcesManager;
+import com.digital.plugin.util.WebResourcesManager;
 import com.intellij.openapi.diagnostic.Logger;
 
 import java.io.*;
@@ -11,8 +11,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DigitalJsSynthesizer {
-    private static final Logger LOG = Logger.getInstance(DigitalJsSynthesizer.class);
+public class DigitalSynthesizer {
+    private static final Logger LOG = Logger.getInstance(DigitalSynthesizer.class);
 
     public static class SynthesisResult {
         public final boolean isSuccess;

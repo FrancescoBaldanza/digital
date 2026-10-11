@@ -46,7 +46,7 @@ try {
     const embeddedVerilog = (typeof __UNIBO_VERILOG_SOURCE__ !== 'undefined') ? __UNIBO_VERILOG_SOURCE__ : '';
 
     if (!fs.existsSync(uniboLib)) {
-        tmpBundle = path.join('/tmp', 'digitaljs_unibo_modules.v');
+        tmpBundle = path.join('/tmp', 'digital_unibo_modules.v');
         if (embeddedVerilog) {
             fs.writeFileSync(tmpBundle, embeddedVerilog, 'utf8');
             uniboLib = tmpBundle;

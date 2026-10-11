@@ -12,12 +12,12 @@
 - **3-Column Web Interface:**
   - Column 1: File Explorer / Circuit sample picker.
   - Column 2: Verilog code editor.
-  - Column 3: DigitalJS interactive circuit visualization.
+  - Column 3: Digital interactive circuit visualization.
   - Action Toolbar: prominent manual "Compile" button with loading indicator.
   - Synthesis Feedback: error banner displaying compiler/synthesis errors on failure; re-rendering the circuit graph on success.
 - **Unified Runtime & JetBrains Integration:**
   - Web UI operates cleanly both as standalone web app (`npm run dev` / `npm run prod`) and embedded within the JetBrains plugin tool window via JCEF.
-  - Ensure end-to-end Verilog → `yosys2digitaljs` → DigitalJS circuit rendering works reliably.
+  - Ensure end-to-end Verilog → `yosys2digitaljs` → Digital circuit rendering works reliably.
   - Ensure existing test suite passes (`npm test`).
 
 ### Excluded / Non-Goals for this Phase
@@ -32,7 +32,7 @@
 | :--- | :--- | :--- | :--- |
 | `sourceVerilog` | `string` | Raw Verilog module code | Non-empty for compilation |
 | `synthesisStatus` | `enum('idle', 'compiling', 'success', 'error')` | State of the compilation pipeline | Transitions strictly: idle/error/success -> compiling -> success/error |
-| `circuitData` | `object` | DigitalJS JSON circuit schema | Parsed Yosys netlist with cells, ports, and nets |
+| `circuitData` | `object` | Digital JSON circuit schema | Parsed Yosys netlist with cells, ports, and nets |
 | `compileError` | `string \| null` | Error output from Yosys / synthesis parser | Displayed in error banner when `synthesisStatus === 'error'` |
 | `selectedFile` | `string \| null` | Currently active Verilog fixture/file in explorer | Resolved path or file key in `tests/` |
 

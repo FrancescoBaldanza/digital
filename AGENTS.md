@@ -1,6 +1,6 @@
 # Agent Instructions & Guidelines (AGENTS.md)
 
-Welcome to **digitaljs**. This repository strictly follows the **Spec-Driven Development (SDD)** methodology (DeepLearning.AI / JetBrains standard).
+Welcome to **Digital**. This repository strictly follows the **Spec-Driven Development (SDD)** methodology (DeepLearning.AI / JetBrains standard).
 
 > **Core Principle:** *The agent is the muscle, the specification is the brain.*
 > Never generate, refactor, or delete production code without referencing or creating the corresponding specification under `specs/`.

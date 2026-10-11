@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.1.0"
 }
 
-group = "com.digitaljs"
+group = "com.digital"
 version = "1.0.0"
 
 repositories {

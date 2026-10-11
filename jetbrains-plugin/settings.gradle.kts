@@ -1,1 +1,1 @@
-rootProject.name = "digitaljs-preview"
+rootProject.name = "digital-preview"

@@ -1,12 +1,12 @@
-![][digitaljs-logo]
+![][digital-logo]
 
-# DigitalJS
+# Digital
 
 This project is a digital circuit simulator implemented in Javascript.
 It is designed to simulate circuits synthesized by hardware design tools
 like [Yosys](https://yosyshq.net/yosys/) (Github repo [here](https://github.com/YosysHQ/yosys/)), and it has a companion project
 [yosys2digitaljs](https://github.com/tilk/yosys2digitaljs), which converts
-Yosys output files to DigitalJS. It is also intended to be a teaching tool,
+Yosys output files to Digital. It is also intended to be a teaching tool,
 therefore readability and ease of inspection is one of top concerns for
 the project.
 
@@ -22,10 +22,10 @@ In Proceedings of the 8th Computer Science Education Research Conference
 
 # Usage
 
-You can use DigitalJS in your project by installing it from NPM:
+You can use Digital in your project by installing it from NPM:
 
 ```bash
-npm install digitaljs
+npm install digital
 ```
 
 Or you can use the [Webpack bundle](https://tilk.github.io/digitaljs/main.js) directly.
@@ -36,7 +36,7 @@ JS code ([see running example](https://tilk.github.io/digitaljs/test/fulladder.h
 
 ```javascript
 // create the simulation object
-const circuit = new digitaljs.Circuit(input_goes_here);
+const circuit = new digital.Circuit(input_goes_here);
 // display on #paper
 const paper = circuit.displayOn($('#paper'));
 // activate real-time simulation
@@ -200,5 +200,5 @@ Some ideas for further developing the simulator.
  * Verilog export.
  * Smartphone and tablet compatible UI.
 
-[digitaljs-logo]: docs/resources/digitaljs_textpath_right.svg
+[digital-logo]: docs/resources/digital_textpath_right.svg
 
