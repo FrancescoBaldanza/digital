@@ -11,10 +11,10 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 1.4 Scrivere unit test per le classi `Module`, `Input`, `Output` e `Shape`
 
 ### Task Group 2: Library Registry & Directory Resolver
-- [ ] 2.1 Rafforzare `LibraryRegistry` in `src/libraries/registry.mjs` per gestire sia librerie built-in (`src/libraries/`) che esterne
-- [ ] 2.2 Implementare il resolver di filesystem per directory configurabili (scansione automatica di `./libraries/` e percorsi utente)
-- [ ] 2.3 Integrare i percorsi di include risolti nel compilatore Verilog / pipeline `yosys2digitaljs`
-- [ ] 2.4 Scrivere unit test per registrazione, discovery e risoluzione dei percorsi delle librerie
+- [x] 2.1 Rafforzare `LibraryRegistry` in `src/libraries/registry.mjs` per gestire sia librerie built-in (`src/libraries/`) che esterne
+- [x] 2.2 Implementare il resolver di filesystem per directory configurabili (scansione automatica di `./libraries/` e percorsi utente)
+- [x] 2.3 Integrare i percorsi di include risolti nel compilatore Verilog / pipeline `yosys2digitaljs`
+- [x] 2.4 Scrivere unit test per registrazione, discovery e risoluzione dei percorsi delle librerie
 
 ### Task Group 3: UniBo Library & Multi-file Verilog Support
 - [ ] 3.1 Verificare e correggere tutti i componenti della libreria UniBo in `src/libraries/unibo/` (multiplexer, decodificatori, registri, ALU)

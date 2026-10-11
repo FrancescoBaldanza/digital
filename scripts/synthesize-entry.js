@@ -53,13 +53,33 @@ try {
         }
     }
 
+    // Try importing the LibraryResolver from lib/libraries/resolver.js if compiled, or fallback gracefully
+    let resolvedLibDirs = [];
+    try {
+        const { defaultResolver } = require('../lib/libraries/resolver.js');
+        if (defaultResolver && typeof defaultResolver.resolveIncludeDirectories === 'function') {
+            resolvedLibDirs = defaultResolver.resolveIncludeDirectories([
+                path.dirname(vFile),
+                path.resolve(__dirname, '../libraries'),
+                path.resolve(__dirname, '../src/libraries')
+            ]);
+        }
+    } catch (_) {
+        // Fallback search directories
+        resolvedLibDirs = [
+            path.resolve(__dirname, '../src/libraries/unibo'),
+            path.resolve(__dirname, '../libraries')
+        ];
+    }
+
     // Prepare unibo.v in the directory of vFile and common include paths
     const uniboContent = fs.existsSync(uniboLib) ? fs.readFileSync(uniboLib, 'utf8') : embeddedVerilog;
     const targetDirs = new Set([
         path.dirname(vFile),
         os.tmpdir(),
         '/tmp',
-        '/private/tmp'
+        '/private/tmp',
+        ...resolvedLibDirs
     ]);
     if (originalFilePath && fs.existsSync(originalFilePath)) {
         targetDirs.add(path.dirname(originalFilePath));
@@ -73,7 +93,7 @@ try {
     }
 
     // Build include directory flags for Yosys
-    const includeDirs = Array.from(targetDirs);
+    const includeDirs = Array.from(targetDirs).filter(d => fs.existsSync(d));
     const incArgs = includeDirs.map(d => `-I"${d}"`).join(' ');
 
     let readSources = '';

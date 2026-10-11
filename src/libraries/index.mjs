@@ -1,6 +1,7 @@
 "use strict";
 
-import { registry, Library } from './registry.mjs';
+import { registry, Library, LibraryRegistry } from './registry.mjs';
+import { LibraryResolver, defaultResolver } from './resolver.mjs';
 import { uniboLibrary } from './unibo/index.mjs';
 
 // Ensure UniBo library is registered and active
@@ -9,5 +10,12 @@ if (!registry.get('UniBo')) {
 }
 registry.setActive('UniBo');
 
-export { registry, Library, uniboLibrary };
+export {
+    registry,
+    Library,
+    LibraryRegistry,
+    LibraryResolver,
+    defaultResolver,
+    uniboLibrary
+};
 export default registry;
