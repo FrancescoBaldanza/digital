@@ -12,10 +12,10 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 1.5 Generate and integrate a modern vector project icon representing digital logic circuits
 
 ### Task Group 2: Core Synthesis & Compilation Flow
-- [ ] 2.1 Verify and configure `yosys2digitaljs` synthesis pipeline for manual Verilog-to-circuit conversion
-- [ ] 2.2 Implement manual compilation controller handling state transitions (`idle`, `compiling`, `success`, `error`)
-- [ ] 2.3 Implement synthesis error reporting and banner presentation for invalid Verilog syntax or synthesis errors
-- [ ] 2.4 Verify that existing unit tests in `tests/` pass cleanly with `npm test`
+- [x] 2.1 Verify and configure `yosys2digitaljs` synthesis pipeline for manual Verilog-to-circuit conversion
+- [x] 2.2 Implement manual compilation controller handling state transitions (`idle`, `compiling`, `success`, `error`)
+- [x] 2.3 Implement synthesis error reporting and banner presentation for invalid Verilog syntax or synthesis errors
+- [x] 2.4 Verify that existing unit tests in `tests/` pass cleanly with `npm test`
 
 ### Task Group 3: 3-Column UI & JetBrains Plugin Integration
 - [ ] 3.1 Implement responsive 3-column layout (Column 1: File Explorer, Column 2: Verilog Editor, Column 3: Circuit Visualizer)

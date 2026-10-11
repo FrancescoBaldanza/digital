@@ -11,6 +11,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.jcef.JBCefBrowser;
+import com.intellij.ui.jcef.JBCefBrowserBase;
+import com.intellij.ui.jcef.JBCefJSQuery;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefLoadHandlerAdapter;
@@ -33,6 +35,12 @@ public class DigitalJsPreviewEditor extends UserDataHolderBase implements FileEd
     private volatile boolean isPageLoaded = false;
     private volatile String pendingBase64Circuit = null;
     private volatile String pendingBase64Error = null;
+    private Runnable onCompileRequested = null;
+    private JBCefJSQuery compileQuery = null;
+
+    public void setOnCompileRequested(Runnable onCompileRequested) {
+        this.onCompileRequested = onCompileRequested;
+    }
 
     public DigitalJsPreviewEditor(@NotNull Project project, @NotNull VirtualFile file) {
         this.project = project;
@@ -43,10 +51,21 @@ public class DigitalJsPreviewEditor extends UserDataHolderBase implements FileEd
         this.mainPanel.setFocusable(true);
         this.mainPanel.add(browser.getComponent(), BorderLayout.CENTER);
 
+        compileQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
+        compileQuery.addHandler(request -> {
+            if ("compile".equals(request)) {
+                if (onCompileRequested != null) {
+                    onCompileRequested.run();
+                }
+            }
+            return new JBCefJSQuery.Response("ok");
+        });
+
         browser.getJBCefClient().addLoadHandler(new CefLoadHandlerAdapter() {
             @Override
             public void onLoadEnd(CefBrowser b, CefFrame frame, int httpStatusCode) {
                 isPageLoaded = true;
+                executeJs("window.triggerCompileNative = function() { " + compileQuery.inject("\"compile\"") + " };");
                 if (pendingBase64Circuit != null) {
                     executeJs("window.loadCircuitFromBase64('" + pendingBase64Circuit + "');");
                     pendingBase64Circuit = null;
@@ -152,6 +171,9 @@ public class DigitalJsPreviewEditor extends UserDataHolderBase implements FileEd
 
     @Override
     public void dispose() {
+        if (compileQuery != null) {
+            Disposer.dispose(compileQuery);
+        }
         Disposer.dispose(browser);
     }
 }

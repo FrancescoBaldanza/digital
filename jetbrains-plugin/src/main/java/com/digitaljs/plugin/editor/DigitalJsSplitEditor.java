@@ -20,24 +20,21 @@ public class DigitalJsSplitEditor extends TextEditorWithPreview {
         this.previewEditor = preview;
         this.alarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
 
-        Document document = editor.getEditor().getDocument();
-        document.addDocumentListener(new DocumentListener() {
-            @Override
-            public void documentChanged(@NotNull DocumentEvent event) {
-                scheduleUpdate(document.getText());
-            }
-        }, this);
+        // Connect manual compile callback from webview Compile button
+        preview.setOnCompileRequested(this::compile);
 
-        // Initial render
-        scheduleUpdate(document.getText());
+        // Initial render on file open
+        compile();
     }
 
-    private void scheduleUpdate(String code) {
+    public void compile() {
         alarm.cancelAllRequests();
         alarm.addRequest(() -> {
+            Document document = ((TextEditor) myEditor).getEditor().getDocument();
+            String code = document.getText();
             String path = previewEditor.getFile() != null ? previewEditor.getFile().getPath() : null;
             previewEditor.synthesizeAndRender(code, path);
-        }, 350);
+        }, 10);
     }
 
     @Override
