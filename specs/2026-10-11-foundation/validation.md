@@ -55,6 +55,6 @@ The phase is considered complete when:
 - [x] All task groups in `plan.md` are checked `[x]`
 - [x] All automated tests pass (`npm test`)
 - [x] Production build succeeds (`npm run prod`)
-- [ ] Manual walkthrough acceptance criteria are fulfilled
-- [ ] Working directory is clean with all phase changes committed on `phase-1-foundation`
+- [x] Manual walkthrough acceptance criteria are fulfilled
+- [x] Working directory is clean with all phase changes committed on `phase-1-foundation`
 - [x] Multi-agent verification review passes without blocking concerns (`/verify-phase`)
