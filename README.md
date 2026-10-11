@@ -2,18 +2,16 @@
 
 # Digital
 
-This project is a digital circuit simulator implemented in Javascript.
-It is designed to simulate circuits synthesized by hardware design tools
-like [Yosys](https://yosyshq.net/yosys/) (Github repo [here](https://github.com/YosysHQ/yosys/)), and it has a companion project
-[yosys2digitaljs](https://github.com/tilk/yosys2digitaljs), which converts
-Yosys output files to Digital. It is also intended to be a teaching tool,
+This project is designed to simulate circuits synthesized by hardware design tools
+like [Yosys](https://yosyshq.net/yosys/) (Github repo [here](https://github.com/YosysHQ/yosys/)). It is intended to be a teaching tool,
 therefore readability and ease of inspection is one of top concerns for
 the project.
 
-You can [try it out online](https://digitaljs.tilk.eu/). The web app is
-[a separate Github project](https://github.com/tilk/digitaljs_online/).
+You can [try it out online](https://digitaljs.tilk.eu/) or install the plugin on Visual Studio Code or Jetbrains' IDEs.
+Search it on the marketplace.
+<!-- inserisci il link del sito che gira in modo che usi il proprio github come server-->
 
-## Conference paper
+## Acknolegments
 
 Marek Materzok. 2020. DigitalJS: a Visual Verilog Simulator for Teaching.
 In Proceedings of the 8th Computer Science Education Research Conference

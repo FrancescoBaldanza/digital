@@ -23,13 +23,13 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 3.4 Preservare lo stato di simulazione e interazione del canvas principale durante l'apertura e chiusura della sottofinestra
 
 ### Task Group 4: Lens Bar (Zoom/Pan HUD) & Canvas Navigation
-- [ ] 4.1 Creare il componente floating Lens Bar (barra lente) posizionato in overlay in alto a destra nel canvas del circuito
-- [ ] 4.2 Implementare i controlli dedicati: Zoom In (`+`), Zoom Out (`-`), Zoom Reset (1:1 / `100%`), Adatta alla Vista (`Fit`), e selettore Pan
-- [ ] 4.3 Abilitare la navigazione fluida tramite mouse drag (pan) e rotellina del mouse / gesture (zoom continuo) sul paper JointJS
-- [ ] 4.4 Applicare lo stile visuale sobrio e coerente con il design accademico e minimalista
+- [x] 4.1 Creare il componente floating Lens Bar (barra lente) posizionato in overlay in alto a destra nel canvas del circuito
+- [x] 4.2 Implementare i controlli dedicati: Zoom In (`+`), Zoom Out (`-`), Zoom Reset (1:1 / `100%`), Adatta alla Vista (`Fit`), e selettore Pan
+- [x] 4.3 Abilitare la navigazione fluida tramite mouse drag (pan) e rotellina del mouse / gesture (zoom continuo) sul paper JointJS
+- [x] 4.4 Applicare lo stile visuale sobrio e coerente con il design accademico e minimalista
 
 ### Task Group 5: Complex Circuits Testing & Automated Verification
-- [ ] 5.1 Creare test di integrazione e circuiti di prova multi-modulo con cascate estese di XOR per validare leggibilità e performance
-- [ ] 5.2 Eseguire la suite di test completa (`npm test`) garantendo 0 errori o regressioni
-- [ ] 5.3 Eseguire la build completa del progetto (`npm run build-lib` e `npm run prod`)
-- [ ] 5.4 Eseguire il walkthrough manuale completo dei criteri di accettazione
+- [x] 5.1 Creare test di integrazione e circuiti di prova multi-modulo con cascate estese di XOR per validare leggibilità e performance
+- [x] 5.2 Eseguire la suite di test completa (`npm test`) garantendo 0 errori o regressioni
+- [x] 5.3 Eseguire la build completa del progetto (`npm run build-lib` e `npm run prod`)
+- [x] 5.4 Eseguire il walkthrough manuale completo dei criteri di accettazione

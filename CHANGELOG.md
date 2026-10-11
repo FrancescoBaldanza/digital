@@ -2,6 +2,9 @@
 
 ## 2026-10-11
 
+- fix(jcef): resolve __dirname and path.isAbsolute crashes with path-utils and ensure thread safety
+- feat(phase-3): implement manual compilation flow, hammer icon, subwindow modernization, and HUD zoom/pan
+- feat(phase-3): implement recursive gate merging, zero-distance layout and synthesis pipeline
 - docs(phase-2): mark all validation criteria and definition of done items complete
 - fix(phase-2): harden security checks, sanitize synthesis script, add test-library.v benchmark
 - docs(phase-2): add teacher guide, complete test verification and prod build

@@ -34,15 +34,15 @@ Obiettivo: API OOP per definire moduli custom, sistema librerie (built-in + cust
 Obiettivo: migliorare l'interfaccia utente con subwindow ottimizzata, gate rendering migliorato, barra lente e XOR ricorsivo.
 Guarda [appunti](../docs/notes/request/note.md).
 
-- [ ] Implementare subwindow ottimizzata e modernizzata per dettagli del modulo
-- [ ] Stilizzare il bottone Compile in modo coerente con il tono accademico
-- [ ] Migliorare il rendering dei gate: distanza nulla tra gate connessi, multi-input support
-- [ ] Implementare barra lente sopra il modulo per zoom e navigazione
-- [ ] Implementare merging ricorsivo dei gate XOR per visualizzazione compatta
-- [ ] Migliorare il layout automatico dei circuiti complessi
-- [ ] Assicurare che l'interfaccia rispetti il tono accademico & minimalista
-- [ ] Testare l'UI con circuiti complessi multi-modulo
-- [ ] Navigazione dell'area di lavoro tramite pan (trascinamento) e zoom (ingrandimento)
+- [x] Implementare subwindow ottimizzata e modernizzata per dettagli del modulo
+- [x] Stilizzare il bottone Compile in modo coerente con il tono accademico
+- [x] Migliorare il rendering dei gate: distanza nulla tra gate connessi, multi-input support
+- [x] Implementare barra lente sopra il modulo per zoom e navigazione
+- [x] Implementare merging ricorsivo dei gate XOR per visualizzazione compatta
+- [x] Migliorare il layout automatico dei circuiti complessi
+- [x] Assicurare che l'interfaccia rispetti il tono accademico & minimalista
+- [x] Testare l'UI con circuiti complessi multi-modulo
+- [x] Navigazione dell'area di lavoro tramite pan (trascinamento) e zoom (ingrandimento)
 
 ## Phase 4: Simulazione Avanzata
 Obiettivo: simulazione di metastati, alee (statiche e dinamiche), ritardi di propagazione e calcolo voltaggio.

@@ -14,12 +14,12 @@ Run the following automated commands in the project root:
 | **Bundle Build** | `npm run prod` | Clean Webpack production build generating `dist/` bundles without warnings or errors |
 
 ### Specific Test Assertions
-- [ ] **Recursive Gate Merging:** Data una sequenza di gate XOR concatenati (es. 3 gate binari a cascata), la trasformazione produce un unico gate XOR a 4 ingressi con i segnali di ingresso originali preservati nell'ordine corretto.
-- [ ] **Large Gate Chaining (20+ inputs):** Una cascata estesa (es. 20 ingressi) viene accorpata in un unico gate con 20 ingressi geometricamente equispaziati e collegamenti coerenti.
-- [ ] **Associative Gates Compatibility:** L'algoritmo opera correttamente anche su catene di gate AND, OR, NAND, NOR senza alterare la semantica logica né generare loop.
-- [ ] **Zero-Distance Layout:** Verifica che la distanza tra gate collegati direttamente o in cascata sia impostata a 0 pixel, garantendo continuità visiva.
-- [ ] **Compiler Dirty State Management:** La modifica di un buffer Verilog imposta il flag `isDirty = true` ed emette l'evento per la UI; l'invocazione di `compile()` esegue la sintesi e reimposta `isDirty = false`.
-- [ ] **Lens Bar Zoom Bounds:** Le operazioni di zoom applicate al canvas JointJS rimangono entro i limiti consentiti (`0.1` min, `5.0` max) e l'operazione `fitToScreen` centra correttamente il bounding box del circuito.
+- [x] **Recursive Gate Merging:** Data una sequenza di gate XOR concatenati (es. 3 gate binari a cascata), la trasformazione produce un unico gate XOR a 4 ingressi con i segnali di ingresso originali preservati nell'ordine corretto.
+- [x] **Large Gate Chaining (20+ inputs):** Una cascata estesa (es. 20 ingressi) viene accorpata in un unico gate con 20 ingressi geometricamente equispaziati e collegamenti coerenti.
+- [x] **Associative Gates Compatibility:** L'algoritmo opera correttamente anche su catene di gate AND, OR, NAND, NOR senza alterare la semantica logica né generare loop.
+- [x] **Zero-Distance Layout:** Verifica che la distanza tra gate collegati direttamente o in cascata sia impostata a 0 pixel, garantendo continuità visiva.
+- [x] **Compiler Dirty State Management:** La modifica di un buffer Verilog imposta il flag `isDirty = true` ed emette l'evento per la UI; l'invocazione di `compile()` esegue la sintesi e reimposta `isDirty = false`.
+- [x] **Lens Bar Zoom Bounds:** Le operazioni di zoom applicate al canvas JointJS rimangono entro i limiti consentiti (`0.1` min, `5.0` max) e l'operazione `fitToScreen` centra correttamente il bounding box del circuito.
 
 ---
 
@@ -53,9 +53,9 @@ Step-by-step instructions for human or agent verification:
 
 ## 3. Definition of Done
 The phase is considered complete when:
-- [ ] Tutti i task in [`plan.md`](file:///Users/francescobaldanza/CLionProjects/digital/specs/2026-10-11-ui-improvements/plan.md) sono completati e contrassegnati con `[x]`
-- [ ] La suite di test `npm test` passa con 0 errori
-- [ ] Le build `npm run build-lib` e `npm run prod` terminano con successo
-- [ ] I criteri di accettazione manuale sopra elencati sono verificati
-- [ ] Il codice rispetta lo stile accademico e minimalista
-- [ ] Nessun file temporaneo non tracciato nel repository (`git status` pulito)
+- [x] Tutti i task in [`plan.md`](file:///Users/francescobaldanza/CLionProjects/digital/specs/2026-10-11-ui-improvements/plan.md) sono completati e contrassegnati con `[x]`
+- [x] La suite di test `npm test` passa con 0 errori
+- [x] Le build `npm run build-lib` e `npm run prod` terminano con successo
+- [x] I criteri di accettazione manuale sopra elencati sono verificati
+- [x] Il codice rispetta lo stile accademico e minimalista
+- [x] Nessun file temporaneo non tracciato nel repository (`git status` pulito)
