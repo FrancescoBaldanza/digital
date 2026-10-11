@@ -26,7 +26,7 @@ export class ValidationError extends Error {
 export class Module {
     /**
      * @param {Object} options
-     * @param {string} options.name - Name of the module (e.g. 'ALU', 'FF_D', 'Counter')
+     * @param {string} options.name - Name of the module (e.g. 'ALU', 'FF_D', 'Counter', '\FF-D')
      * @param {Array<Input|Object>} [options.inputs=[]] - List of input ports
      * @param {Array<Output|Object>} [options.outputs=[]] - List of output ports
      * @param {Shape} [options.shape] - Custom shape configuration
@@ -105,16 +105,18 @@ export class Module {
 
     /**
      * Validates this module definition according to contract rules.
-     * Checks identifier syntax, duplicate port names, bus widths, and shape bounds.
+     * Checks identifier syntax (including Verilog escaped identifiers like \FF-D), duplicate port names, bus widths, and shape bounds.
      * @returns {{valid: boolean, errors: string[]}}
      */
     validate() {
         const errors = [];
 
-        // 1. Module name identifier validation
-        const identifierRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-        if (!identifierRegex.test(this.name)) {
-            errors.push(`Module name '${this.name}' is invalid. Must be an alphanumeric identifier starting with a letter or underscore.`);
+        // 1. Module name identifier validation: standard alphanumeric identifier or Verilog escaped identifier (\identifier)
+        const standardIdentifier = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+        const escapedIdentifier = /^\\[\x21-\x7E]+$/;
+
+        if (!standardIdentifier.test(this.name) && !escapedIdentifier.test(this.name)) {
+            errors.push(`Module name '${this.name}' is invalid. Must be an alphanumeric identifier or a valid Verilog escaped identifier.`);
         }
 
         // 2. Minimum port presence

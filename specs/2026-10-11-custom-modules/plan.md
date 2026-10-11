@@ -17,10 +17,10 @@ Detailed sequence of independently executable and verifiable task groups.
 - [x] 2.4 Scrivere unit test per registrazione, discovery e risoluzione dei percorsi delle librerie
 
 ### Task Group 3: UniBo Library & Multi-file Verilog Support
-- [ ] 3.1 Verificare e correggere tutti i componenti della libreria UniBo in `src/libraries/unibo/` (multiplexer, decodificatori, registri, ALU)
-- [ ] 3.2 Garantire la compatibilità e validità della sintassi Verilog (`modules.v`) sia per Yosys che per l'IDE
-- [ ] 3.3 Testare l'inclusione multi-file (`\`include\``) in circuiti gerarchici complessi
-- [ ] 3.4 Scrivere test di integrazione per la corretta sintesi e istanziazione dei componenti UniBo
+- [x] 3.1 Verificare e correggere tutti i componenti della libreria UniBo in `src/libraries/unibo/` (multiplexer, decodificatori, registri, ALU)
+- [x] 3.2 Garantire la compatibilità e validità della sintassi Verilog (`modules.v`) sia per Yosys che per l'IDE
+- [x] 3.3 Testare l'inclusione multi-file (`\`include\``) in circuiti gerarchici complessi
+- [x] 3.4 Scrivere test di integrazione per la corretta sintesi e istanziazione dei componenti UniBo
 
 ### Task Group 4: Subcircuit Hierarchy & IC Inspection ("Sbirciare")
 - [ ] 4.1 Definire il rendering visivo compatto dei moduli personalizzati come Integrated Circuit (IC box con pin layout e label)
